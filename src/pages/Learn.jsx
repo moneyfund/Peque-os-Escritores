@@ -3,7 +3,7 @@ import { ChevronRight, Compass, Sparkles } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { categories, lessons, localized } from '../data/lessons.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import { listUserProgress } from '../services/appService.js'
+import { subscribeUserProgress } from '../services/appService.js'
 import LessonCard from '../components/LessonCard.jsx'
 import LearningIcon from '../components/LearningIcon.jsx'
 import CategoryArtwork from '../components/CategoryArtwork.jsx'
@@ -15,7 +15,8 @@ export default function Learn() {
   const category = searchParams.get('categoria') || 'all'
 
   useEffect(() => {
-    if (profile?.id) listUserProgress(profile.id).then(setProgress)
+    if (!profile?.id) return undefined
+    return subscribeUserProgress(profile.id, setProgress)
   }, [profile?.id])
 
   const progressMap = useMemo(() => Object.fromEntries(progress.map((item) => [item.lessonId, item])), [progress])

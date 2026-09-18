@@ -13,6 +13,7 @@ export default function Lesson() {
   const [params] = useSearchParams()
   const { user, profile, language, login } = useAuth()
   const [savedMessage, setSavedMessage] = useState('')
+  const [saveState, setSaveState] = useState('idle')
   const lesson = getLesson(lessonId)
   const groupId = params.get('grupo')
 
@@ -24,8 +25,25 @@ export default function Lesson() {
       return
     }
     const groupIds = [...new Set([...(profile.groupIds || []), ...(groupId ? [groupId] : [])])]
-    await recordAttempt({ uid: profile.id, lessonId: lesson.id, score, passed, groupIds })
-    setSavedMessage(language === 'es' ? 'Progreso guardado' : 'Progress saved')
+    setSaveState('saving')
+    try {
+      const result = await recordAttempt({ uid: profile.id, lessonId: lesson.id, score, passed, groupIds })
+      if (result?.synced) {
+        setSaveState('synced')
+        setSavedMessage(language === 'es' ? 'Progreso sincronizado' : 'Progress synced')
+      } else {
+        setSaveState('pending')
+        setSavedMessage(language === 'es'
+          ? 'Resultado guardado en este dispositivo. Quedó pendiente de sincronizar con Firebase.'
+          : 'Result saved on this device and is waiting to sync with Firebase.')
+      }
+    } catch (error) {
+      console.error('Progress save failed', error)
+      setSaveState('pending')
+      setSavedMessage(language === 'es'
+        ? 'Resultado conservado en este dispositivo. Firebase no permitió sincronizarlo todavía.'
+        : 'Result kept on this device. Firebase has not allowed it to sync yet.')
+    }
   }
 
   return (
@@ -41,7 +59,7 @@ export default function Lesson() {
           </div>
         </div>
         <LessonPlayer lesson={lesson} language={language} onComplete={handleComplete} />
-        {savedMessage && <div className="save-toast">{savedMessage}{!user && <button onClick={login}>{tr(language, 'login')}</button>}</div>}
+        {savedMessage && <div className={`save-toast save-${saveState}`}>{saveState === 'saving' ? (language === 'es' ? 'Guardando…' : 'Saving…') : savedMessage}{!user && <button onClick={login}>{tr(language, 'login')}</button>}</div>}
         <div className="parent-tip"><Volume2/><div><strong>{language === 'es' ? 'Consejo para acompañar' : 'Grown-up tip'}</strong><span>{language === 'es' ? 'Permite que el niño intente primero y celebra el proceso, no solo la respuesta correcta.' : 'Let the child try first and celebrate the process, not only the correct answer.'}</span></div></div>
       </div>
     </section>

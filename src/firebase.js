@@ -31,11 +31,14 @@ let db = null
 let storage = null
 let googleProvider = null
 let analytics = null
+let authPersistenceReady = Promise.resolve()
 
 if (firebaseReady) {
   app = initializeApp(firebaseConfig)
   auth = getAuth(app)
-  setPersistence(auth, browserLocalPersistence).catch(() => {})
+  authPersistenceReady = setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.warn('Firebase auth persistence could not be initialized.', error)
+  })
   db = initializeFirestore(app, {
     localCache: persistentLocalCache({
       tabManager: persistentMultipleTabManager(),
@@ -49,4 +52,4 @@ if (firebaseReady) {
   }).catch(() => {})
 }
 
-export { app, auth, db, storage, googleProvider, analytics }
+export { app, auth, db, storage, googleProvider, analytics, authPersistenceReady }

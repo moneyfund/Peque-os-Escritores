@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { categories, lessons, localized } from '../data/lessons.js'
-import { listAssignments, listGroups, listUserProgress, subscribeInvitations } from '../services/appService.js'
+import { listAssignments, listGroups, subscribeInvitations, subscribeUserProgress } from '../services/appService.js'
 import LessonCard from '../components/LessonCard.jsx'
 import LearningIcon from '../components/LearningIcon.jsx'
 import LessonArtwork from '../components/LessonArtwork.jsx'
@@ -25,8 +25,8 @@ export default function Home() {
   const [inviteCount, setInviteCount] = useState(0)
 
   useEffect(() => {
-    if (!profile?.id) return
-    listUserProgress(profile.id).then(setProgress)
+    if (!profile?.id) return undefined
+    return subscribeUserProgress(profile.id, setProgress)
   }, [profile?.id])
 
   useEffect(() => {

@@ -1973,3 +1973,13 @@ body{
   .v3-lesson-visual{width:78px!important;height:104px!important}
   .lesson-artwork{max-width:70px}
 }
+
+.save-toast.save-pending{
+  background:linear-gradient(145deg,#fff1c7,#fff7df)!important;
+  color:#815b17!important;
+  border:1px solid rgba(202,151,48,.18);
+}
+.save-toast.save-synced{
+  background:linear-gradient(145deg,#daf5e6,#edf9f2)!important;
+  color:#33785a!important;
+}

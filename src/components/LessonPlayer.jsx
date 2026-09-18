@@ -156,18 +156,22 @@ export default function LessonPlayer({ lesson, language, onComplete }) {
     onComplete?.({ score: normalized, passed: normalized >= 70 })
   }
 
-  const choiceAnswer = (value, answer) => {
+  const choiceAnswer = (value) => {
     if (selected !== null) return
     setSelected(value)
-    if (value === answer) setCorrectCount((count) => count + 1)
   }
 
   const nextQuestion = () => {
     const total = lesson.items?.length || 1
+    const currentCorrect = selected === answer ? 1 : 0
+    const nextCorrectCount = correctCount + currentCorrect
+
     if (index >= total - 1) {
-      finish((correctCount / total) * 100)
+      finish((nextCorrectCount / total) * 100)
       return
     }
+
+    setCorrectCount(nextCorrectCount)
     setIndex((value) => value + 1)
     setSelected(null)
   }
@@ -257,13 +261,13 @@ export default function LessonPlayer({ lesson, language, onComplete }) {
 
   const renderOptions = () => {
     if (lesson.type === 'color' || lesson.type === 'listen-color') {
-      return <div className="color-options">{options.map((color) => <button key={color} className={`color-choice ${selected === color ? (isCorrect ? 'correct' : 'wrong') : ''}`} style={{ '--choice-color': color }} onClick={() => choiceAnswer(color, answer)} aria-label={color}><span /></button>)}</div>
+      return <div className="color-options">{options.map((color) => <button key={color} className={`color-choice ${selected === color ? (isCorrect ? 'correct' : 'wrong') : ''}`} style={{ '--choice-color': color }} onClick={() => choiceAnswer(color)} aria-label={color}><span /></button>)}</div>
     }
     if (lesson.type === 'shape') {
-      return <div className="answer-grid">{options.map((value) => <button key={value} className={selected === value ? (isCorrect ? 'correct' : 'wrong') : ''} onClick={() => choiceAnswer(value, answer)}>{item.labels[language]?.[value] || item.labels.es[value]}</button>)}</div>
+      return <div className="answer-grid">{options.map((value) => <button key={value} className={selected === value ? (isCorrect ? 'correct' : 'wrong') : ''} onClick={() => choiceAnswer(value)}>{item.labels[language]?.[value] || item.labels.es[value]}</button>)}</div>
     }
     const emojiOptions = lesson.type === 'listen-emoji' || lesson.type === 'pattern'
-    return <div className={`answer-grid ${emojiOptions ? 'emoji-options' : ''}`}>{options.map((value) => <button key={value} className={selected === value ? (isCorrect ? 'correct' : 'wrong') : ''} onClick={() => choiceAnswer(value, answer)}>{value}</button>)}</div>
+    return <div className={`answer-grid ${emojiOptions ? 'emoji-options' : ''}`}>{options.map((value) => <button key={value} className={selected === value ? (isCorrect ? 'correct' : 'wrong') : ''} onClick={() => choiceAnswer(value)}>{value}</button>)}</div>
   }
 
   return (

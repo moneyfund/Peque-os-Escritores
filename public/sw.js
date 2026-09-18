@@ -1,4 +1,4 @@
-const CACHE = 'pequenos-escritores-v1'
+const CACHE = 'pequenos-escritores-v7-auth-progress'
 const CORE = ['/', '/icon.svg', '/manifest.webmanifest']
 
 self.addEventListener('install', (event) => {

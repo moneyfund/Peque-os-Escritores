@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { CheckCircle2, RotateCcw, Target, Trophy } from 'lucide-react'
 import { lessons } from '../data/lessons.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import { listUserProgress } from '../services/appService.js'
+import { subscribeUserProgress } from '../services/appService.js'
 import LessonCard from '../components/LessonCard.jsx'
 
 export default function Progress() {
@@ -10,7 +10,8 @@ export default function Progress() {
   const [progress, setProgress] = useState([])
 
   useEffect(() => {
-    if (profile?.id) listUserProgress(profile.id).then(setProgress)
+    if (!profile?.id) return undefined
+    return subscribeUserProgress(profile.id, setProgress)
   }, [profile?.id])
 
   const map = useMemo(() => Object.fromEntries(progress.map((item) => [item.lessonId, item])), [progress])

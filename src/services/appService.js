@@ -87,14 +87,21 @@ export async function ensureUserProfile(authUser) {
   return { id: authUser.uid, ...profile }
 }
 
-export function subscribeProfile(uid, callback) {
+export function subscribeProfile(uid, callback, onError) {
   if (!firebaseReady) {
     callback(getDemoProfile())
     return () => {}
   }
-  return onSnapshot(doc(db, 'users', uid), (snapshot) => {
-    if (snapshot.exists()) callback({ id: uid, ...snapshot.data() })
-  })
+  return onSnapshot(
+    doc(db, 'users', uid),
+    (snapshot) => {
+      if (snapshot.exists()) callback({ id: uid, ...snapshot.data() })
+    },
+    (error) => {
+      console.error('Profile subscription failed', error)
+      onError?.(error)
+    },
+  )
 }
 
 export async function updateUserProfile(uid, patch) {
