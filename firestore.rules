@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isSelf(uid) { return signedIn() && request.auth.uid == uid; }
+    function isGroupOwner(groupId) {
+      return signedIn() && get(/databases/$(database)/documents/groups/$(groupId)).data.ownerId == request.auth.uid;
+    }
+    function isGroupMember(groupId) {
+      return signedIn() && (
+        isGroupOwner(groupId) ||
+        exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid))
+      );
+    }
+
+    match /users/{uid} {
+      allow create, read, update: if isSelf(uid);
+      allow delete: if false;
+      match /progress/{lessonId} {
+        allow read, write: if isSelf(uid);
+      }
+    }
+
+    match /publicProfiles/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isSelf(uid);
+      allow delete: if false;
+    }
+
+    match /groups/{groupId} {
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow read: if signedIn() && (resource.data.ownerId == request.auth.uid || exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid)));
+      allow update: if isGroupOwner(groupId) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isGroupOwner(groupId);
+
+      match /members/{uid} {
+        allow read: if isGroupMember(groupId);
+        allow create: if signedIn() && (
+          (isGroupOwner(groupId) && request.resource.data.role == 'teacher') ||
+          (request.auth.uid == uid && request.resource.data.role == 'student' &&
+            exists(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)) &&
+            get(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)).data.toUid == uid &&
+            get(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)).data.groupId == groupId)
+        );
+        allow update: if isGroupOwner(groupId);
+        allow delete: if isGroupOwner(groupId) || isSelf(uid);
+      }
+
+      match /assignments/{assignmentId} {
+        allow read: if isGroupMember(groupId);
+        allow create, update, delete: if isGroupOwner(groupId);
+      }
+
+      match /memberProgress/{uid}/lessons/{lessonId} {
+        allow read: if isGroupMember(groupId);
+        allow create, update: if isSelf(uid);
+        allow delete: if isSelf(uid) || isGroupOwner(groupId);
+      }
+    }
+
+    match /invitations/{inviteId} {
+      allow read: if signedIn() && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid && isGroupOwner(request.resource.data.groupId);
+      allow update: if signedIn() && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid)
+        && request.resource.data.groupId == resource.data.groupId
+        && request.resource.data.toUid == resource.data.toUid
+        && request.resource.data.fromUid == resource.data.fromUid;
+      allow delete: if false;
+    }
+  }
+}
