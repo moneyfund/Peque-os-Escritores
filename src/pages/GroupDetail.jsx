@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, BookOpen, BookPlus, Camera, CheckCircle2, Copy, Play, Send, Target, UsersRound } from 'lucide-react'
-import LearningIcon from '../components/LearningIcon.jsx'
+import LessonArtwork from '../components/LessonArtwork.jsx'
 import { Link, useParams } from 'react-router-dom'
 import Avatar from '../components/Avatar.jsx'
 import GroupAvatar from '../components/GroupAvatar.jsx'
@@ -197,7 +197,7 @@ export default function GroupDetail() {
                   if (!lesson) return null
                   return (
                     <Link key={assignment.id} to={`/lecciones/${lesson.id}`} className="v2-assignment-row">
-                      <span className="v2-assignment-icon v3-assignment-icon"><LearningIcon name={lesson.id} size={25}/></span>
+                      <span className="v2-assignment-icon v3-assignment-icon"><LessonArtwork lessonId={lesson.id} size={48}/></span>
                       <div><small>{language === 'es' ? 'Asignada por' : 'Assigned by'} {assignment.teacherName}</small><strong>{localized(lesson.title, language)}</strong></div>
                       <span className="v2-play-dot"><Play size={15}/></span>
                     </Link>

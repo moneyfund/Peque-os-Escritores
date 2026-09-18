@@ -176,6 +176,53 @@ export async function updateGroupProfile(groupId, patch) {
   return avatarPatch
 }
 
+export async function migrateLegacyDemoProgress(uid) {
+  if (!firebaseReady || !uid) return { migrated: 0 }
+
+  const markerKey = `pequenos-progress-migrated-${uid}`
+  if (localStorage.getItem(markerKey) === '1') return { migrated: 0 }
+
+  const data = readDemoData()
+  const legacyMaps = Object.entries(data.progress || {})
+    .filter(([legacyUid]) => legacyUid !== uid)
+    .map(([, value]) => value || {})
+
+  const mergedLegacy = {}
+  for (const map of legacyMaps) {
+    for (const [lessonId, value] of Object.entries(map)) {
+      const previous = mergedLegacy[lessonId] || {}
+      mergedLegacy[lessonId] = {
+        attempts: Math.max(previous.attempts || 0, value.attempts || 0),
+        completed: Boolean(previous.completed || value.completed),
+        lastScore: Math.max(previous.lastScore || 0, value.lastScore || 0),
+        bestScore: Math.max(previous.bestScore || previous.lastScore || 0, value.bestScore || value.lastScore || 0),
+      }
+    }
+  }
+
+  const entries = Object.entries(mergedLegacy)
+  if (!entries.length) return { migrated: 0 }
+
+  let migrated = 0
+  for (const [lessonId, legacy] of entries) {
+    const progressRef = doc(db, 'users', uid, 'progress', lessonId)
+    const snapshot = await getDoc(progressRef)
+    const current = snapshot.exists() ? snapshot.data() : {}
+    const next = {
+      attempts: Math.max(current.attempts || 0, legacy.attempts || 0),
+      completed: Boolean(current.completed || legacy.completed),
+      lastScore: Math.max(current.lastScore || 0, legacy.lastScore || 0),
+      bestScore: Math.max(current.bestScore || current.lastScore || 0, legacy.bestScore || legacy.lastScore || 0),
+      updatedAt: serverTimestamp(),
+    }
+    await setDoc(progressRef, next, { merge: true })
+    migrated += 1
+  }
+
+  localStorage.setItem(markerKey, '1')
+  return { migrated }
+}
+
 export async function listUserProgress(uid) {
   if (!firebaseReady) {
     const data = readDemoData()
@@ -215,17 +262,32 @@ export async function recordAttempt({ uid, lessonId, score, passed, groupIds = [
     return
   }
 
-  const base = {
-    attempts: increment(1),
+  const userProgressRef = doc(db, 'users', uid, 'progress', lessonId)
+  const userSnapshot = await getDoc(userProgressRef)
+  const previous = userSnapshot.exists() ? userSnapshot.data() : {}
+  const next = {
+    attempts: (previous.attempts || 0) + 1,
     lastScore: score,
+    bestScore: Math.max(previous.bestScore || previous.lastScore || 0, score),
+    completed: Boolean(previous.completed || passed),
     updatedAt: serverTimestamp(),
   }
-  if (passed) base.completed = true
-  await setDoc(doc(db, 'users', uid, 'progress', lessonId), base, { merge: true })
+  await setDoc(userProgressRef, next, { merge: true })
 
-  await Promise.all(groupIds.map((groupId) =>
-    setDoc(doc(db, 'groups', groupId, 'memberProgress', uid, 'lessons', lessonId), base, { merge: true }),
-  ))
+  // El progreso personal es la fuente principal. La sincronización a grupos
+  // es secundaria y no debe hacer que el intento se pierda si un grupo cambió.
+  await Promise.allSettled(groupIds.map(async (groupId) => {
+    const groupProgressRef = doc(db, 'groups', groupId, 'memberProgress', uid, 'lessons', lessonId)
+    const groupSnapshot = await getDoc(groupProgressRef)
+    const groupPrevious = groupSnapshot.exists() ? groupSnapshot.data() : {}
+    await setDoc(groupProgressRef, {
+      attempts: (groupPrevious.attempts || 0) + 1,
+      lastScore: score,
+      bestScore: Math.max(groupPrevious.bestScore || groupPrevious.lastScore || 0, score),
+      completed: Boolean(groupPrevious.completed || passed),
+      updatedAt: serverTimestamp(),
+    }, { merge: true })
+  }))
 }
 
 export async function createGroup(uid, profile, name) {

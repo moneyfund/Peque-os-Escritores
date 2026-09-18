@@ -2,7 +2,7 @@ import { ArrowUpRight, Check, Play } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { localized } from '../data/lessons.js'
-import LearningIcon from './LearningIcon.jsx'
+import LessonArtwork from './LessonArtwork.jsx'
 
 export default function LessonCard({ lesson, language, progress, compact = false, href }) {
   const completed = Boolean(progress?.completed)
@@ -17,7 +17,7 @@ export default function LessonCard({ lesson, language, progress, compact = false
     >
       <Link to={href || `/lecciones/${lesson.id}`}>
         <div className="v3-lesson-visual">
-          <LearningIcon name={lesson.id} size={36}/>
+          <LessonArtwork lessonId={lesson.id} size={78}/>
           <span className="v3-lesson-shape shape-a"/>
           <span className="v3-lesson-shape shape-b"/>
           {completed && <b><Check size={14}/></b>}

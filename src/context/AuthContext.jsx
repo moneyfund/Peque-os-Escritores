@@ -7,7 +7,7 @@ import {
   signOut,
 } from 'firebase/auth'
 import { auth, firebaseReady, googleProvider } from '../firebase.js'
-import { ensureUserProfile, getDemoProfile, subscribeProfile } from '../services/appService.js'
+import { ensureUserProfile, getDemoProfile, migrateLegacyDemoProgress, subscribeProfile } from '../services/appService.js'
 
 const AuthContext = createContext(null)
 
@@ -35,6 +35,7 @@ export function AuthProvider({ children }) {
       }
       setUser(authUser)
       await ensureUserProfile(authUser)
+      await migrateLegacyDemoProgress(authUser.uid).catch(() => {})
       stopProfile = subscribeProfile(authUser.uid, setProfile)
       setLoading(false)
     })

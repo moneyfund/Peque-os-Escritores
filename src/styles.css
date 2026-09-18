@@ -1932,3 +1932,44 @@ body{
   .v2-class-hero{grid-template-columns:1fr!important}
   .group-hero-avatar-zone{justify-self:center}
 }
+
+
+/* ==========================================================
+   V5 — ILLUSTRATED CHALLENGE CARDS
+   ========================================================== */
+.lesson-artwork{
+  display:grid;
+  place-items:center;
+  flex:none;
+  line-height:0;
+  transform-origin:center;
+  filter:saturate(1.08);
+}
+.lesson-artwork svg{width:100%;height:auto;overflow:visible}
+.v3-lesson-visual{
+  width:96px!important;
+  height:122px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.18))!important;
+  border:1px solid rgba(255,255,255,.44);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 12px 24px rgba(44,66,109,.09);
+}
+.v3-lesson-card{
+  min-height:190px;
+  box-shadow:0 18px 34px rgba(43,67,115,.12)!important;
+}
+.v3-lesson-card.lesson-vowels{background:linear-gradient(145deg,#ffb5cc,#f6d6e2)!important}
+.v3-lesson-card.lesson-numbers{background:linear-gradient(145deg,#ffe28a,#fff0bc)!important}
+.v3-lesson-card.lesson-colors{background:linear-gradient(145deg,#9be5bb,#d2f4df)!important}
+.v3-lesson-card.lesson-shapes{background:linear-gradient(145deg,#d9a9f7,#edd7fb)!important}
+.v3-lesson-card.lesson-words{background:linear-gradient(145deg,#a8d5fb,#d8edff)!important}
+.v3-task-icon .lesson-artwork,
+.v3-assignment-icon .lesson-artwork{width:46px!important}
+.v3-task-icon,
+.v3-assignment-icon{
+  overflow:visible!important;
+  background:rgba(255,255,255,.28)!important;
+}
+@media(max-width:520px){
+  .v3-lesson-visual{width:78px!important;height:104px!important}
+  .lesson-artwork{max-width:70px}
+}

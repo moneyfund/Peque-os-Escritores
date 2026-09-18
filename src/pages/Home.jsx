@@ -7,6 +7,7 @@ import { categories, lessons, localized } from '../data/lessons.js'
 import { listAssignments, listGroups, listUserProgress, subscribeInvitations } from '../services/appService.js'
 import LessonCard from '../components/LessonCard.jsx'
 import LearningIcon from '../components/LearningIcon.jsx'
+import LessonArtwork from '../components/LessonArtwork.jsx'
 import CategoryArtwork from '../components/CategoryArtwork.jsx'
 
 const floatTransition = (delay = 0, duration = 4.2) => ({
@@ -170,7 +171,7 @@ export default function Home() {
               if (!lesson) return null
               return (
                 <Link key={item.id} to={`/lecciones/${lesson.id}`} className={`v3-task-card task-${lesson.category}`}>
-                  <span className="v3-task-icon"><LearningIcon name={lesson.id} size={27}/></span>
+                  <span className="v3-task-icon"><LessonArtwork lessonId={lesson.id} size={48}/></span>
                   <div><small>{item.groupName}</small><strong>{localized(lesson.title, language)}</strong></div>
                   <span className="v3-play-dot"><Play size={15}/></span>
                 </Link>
