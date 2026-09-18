@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 220" role="img" aria-labelledby="title">
+  <title id="title">Pequeños Escritores</title>
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#42b7ff"/><stop offset="1" stop-color="#176fe8"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd85d"/><stop offset="1" stop-color="#ff9f1c"/></linearGradient>
+    <linearGradient id="pencil" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffdc5d"/><stop offset="1" stop-color="#ff9d1f"/></linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8066ff"/><stop offset="1" stop-color="#5536d7"/></linearGradient>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#24376b" flood-opacity=".18"/></filter>
+  </defs>
+
+  <g transform="translate(14 18)" filter="url(#shadow)">
+    <path d="M32 92c38-17 79-12 111 17v75c-31-25-72-31-111-12Z" fill="url(#blue)"/>
+    <path d="M143 109c35-29 78-34 119-17v80c-43-18-84-13-119 12Z" fill="url(#blue)"/>
+    <path d="M42 82c37-14 73-7 101 19v67c-29-21-63-27-101-14Z" fill="#fffaf0"/>
+    <path d="M143 101c31-26 66-33 108-19v72c-38-14-73-7-108 14Z" fill="#fff"/>
+    <path d="M42 126c36-12 69-7 101 13" fill="none" stroke="#ffd05b" stroke-width="8" stroke-linecap="round"/>
+    <path d="M143 139c31-20 64-25 101-13" fill="none" stroke="#56c7f2" stroke-width="8" stroke-linecap="round"/>
+    <path d="M143 102v65" stroke="#d9d2ef" stroke-width="4" stroke-linecap="round"/>
+
+    <g transform="translate(172 4) rotate(31)">
+      <rect x="0" y="0" width="36" height="126" rx="14" fill="url(#pencil)"/>
+      <rect x="0" y="0" width="36" height="26" rx="12" fill="#ff6683"/>
+      <rect x="0" y="23" width="36" height="8" fill="#e9eef7"/>
+      <path d="M0 126h36l-18 35Z" fill="#ffc98a"/>
+      <path d="M12 149h12l-6 12Z" fill="#17345f"/>
+      <path d="M10 39v72" stroke="#fff" stroke-opacity=".45" stroke-width="5" stroke-linecap="round"/>
+    </g>
+
+    <g font-family="Arial Rounded MT Bold, Nunito, system-ui, sans-serif" font-weight="900" text-anchor="middle">
+      <text x="60" y="54" font-size="36" fill="#ff4f7d" transform="rotate(-9 60 54)">A</text>
+      <text x="105" y="38" font-size="37" fill="#1c87f2" transform="rotate(5 105 38)">B</text>
+      <text x="147" y="56" font-size="34" fill="#ffb11c" transform="rotate(7 147 56)">C</text>
+    </g>
+  </g>
+
+  <g font-family="Arial Rounded MT Bold, Nunito, system-ui, sans-serif" font-weight="900">
+    <text x="306" y="103" font-size="64" fill="#123b82" letter-spacing="-2">Pequeños</text>
+    <text x="306" y="169" font-size="62" fill="url(#blue)" letter-spacing="-2">Escritores</text>
+  </g>
+</svg>

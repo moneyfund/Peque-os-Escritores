@@ -46,15 +46,14 @@ export default function Layout({ children }) {
   ]
 
   return (
-    <div className="app-shell v2-shell">
-      <header className="v2-topbar">
-        <div className="container v2-topbar-inner">
-          <Link to="/" className="v2-brand" aria-label="Pequeños Escritores">
-            <span className="v2-brand-book"><i/><i/><i/></span>
-            <span><strong>Pequeños</strong><small>Escritores</small></span>
+    <div className="app-shell v3-shell">
+      <header className="v3-topbar">
+        <div className="container v3-topbar-inner">
+          <Link to="/" className="v3-brand-link" aria-label="Pequeños Escritores">
+            <img src="/brand-logo.svg" alt="Pequeños Escritores" className="v3-brand-image" />
           </Link>
 
-          <nav className="v2-desktop-nav" aria-label="Principal">
+          <nav className="v3-desktop-nav" aria-label="Principal">
             {primaryNav.map(({ to, label, icon: Icon, end }) => (
               <NavLink end={end} key={to} to={to} className={({ isActive }) => isActive ? 'active' : ''}>
                 <Icon size={17}/><span>{label}</span>
@@ -62,17 +61,17 @@ export default function Layout({ children }) {
             ))}
           </nav>
 
-          <div className="v2-top-actions">
+          <div className="v3-top-actions">
             {user && (
-              <Link to="/invitaciones" className="v2-round-action" aria-label="Invitaciones">
+              <Link to="/invitaciones" className="v3-round-action" aria-label="Invitaciones">
                 <Bell size={19}/>
                 {inviteCount > 0 && <b>{inviteCount}</b>}
               </Link>
             )}
 
             {user && profile ? (
-              <div className="v2-profile-menu-wrap" ref={profileMenuRef}>
-                <button className="v2-profile-trigger" onClick={() => setProfileOpen((value) => !value)}>
+              <div className="v3-profile-menu-wrap" ref={profileMenuRef}>
+                <button className="v3-profile-trigger" onClick={() => setProfileOpen((value) => !value)}>
                   <Avatar avatar={profile.avatar} avatarType={profile.avatarType} size="sm"/>
                   <span>{profile.username}</span>
                   <ChevronDown size={15}/>
@@ -80,8 +79,8 @@ export default function Layout({ children }) {
 
                 <AnimatePresence>
                   {profileOpen && (
-                    <motion.div className="v2-profile-menu" initial={{ opacity: 0, y: -8, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: .98 }}>
-                      <div className="v2-profile-menu-head">
+                    <motion.div className="v3-profile-menu" initial={{ opacity: 0, y: -8, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: .98 }}>
+                      <div className="v3-profile-menu-head">
                         <Avatar avatar={profile.avatar} avatarType={profile.avatarType} size="md"/>
                         <div><strong>{profile.username}</strong><small>{profile.userCode}</small></div>
                       </div>
@@ -94,13 +93,13 @@ export default function Layout({ children }) {
                 </AnimatePresence>
               </div>
             ) : (
-              <button className="v2-login-button" onClick={login}>
+              <button className="v3-login-button" onClick={login}>
                 <span className="google-g">G</span>
                 {language === 'es' ? 'Entrar' : 'Sign in'}
               </button>
             )}
 
-            <button className="v2-menu-button" onClick={() => setMenuOpen(true)} aria-label="Menú"><Menu size={22}/></button>
+            <button className="v3-menu-button" onClick={() => setMenuOpen(true)} aria-label="Menú"><Menu size={22}/></button>
           </div>
         </div>
       </header>
@@ -108,7 +107,7 @@ export default function Layout({ children }) {
       <main>{children}</main>
 
       {user && (
-        <nav className="v2-mobile-dock" aria-label="Navegación móvil">
+        <nav className="v3-mobile-dock" aria-label="Navegación móvil">
           <NavLink end to="/"><Home/><span>{language === 'es' ? 'Inicio' : 'Home'}</span></NavLink>
           <NavLink to="/aprender"><BookOpen/><span>{language === 'es' ? 'Aprender' : 'Learn'}</span></NavLink>
           <NavLink to="/grupos"><UsersRound/><span>{language === 'es' ? 'Grupos' : 'Groups'}</span></NavLink>
@@ -119,15 +118,15 @@ export default function Layout({ children }) {
       <AnimatePresence>
         {menuOpen && (
           <>
-            <motion.button className="drawer-backdrop v2-drawer-backdrop" aria-label="Cerrar menú" onClick={() => setMenuOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-            <motion.aside className="drawer v2-drawer" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 320, damping: 32 }}>
+            <motion.button className="drawer-backdrop v3-drawer-backdrop" aria-label="Cerrar menú" onClick={() => setMenuOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+            <motion.aside className="drawer v3-drawer" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 320, damping: 32 }}>
               <div className="drawer-header">
-                <span className="v2-brand"><span className="v2-brand-book"><i/><i/><i/></span><span><strong>Pequeños</strong><small>Escritores</small></span></span>
+                <img src="/brand-logo.svg" alt="Pequeños Escritores" className="v3-drawer-logo" />
                 <button className="icon-only" onClick={() => setMenuOpen(false)}><X/></button>
               </div>
 
               {profile && (
-                <div className="v2-drawer-profile">
+                <div className="v3-drawer-profile">
                   <Avatar avatar={profile.avatar} avatarType={profile.avatarType} size="lg"/>
                   <div><strong>{profile.username}</strong><small>{profile.userCode}</small></div>
                 </div>

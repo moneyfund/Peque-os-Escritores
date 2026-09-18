@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, BookOpen, BookPlus, CheckCircle2, Copy, Play, Send, Target, UsersRound } from 'lucide-react'
+import LearningIcon from '../components/LearningIcon.jsx'
 import { Link, useParams } from 'react-router-dom'
 import Avatar from '../components/Avatar.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -90,7 +91,7 @@ export default function GroupDetail() {
   }, [memberProgress])
 
   if (loading) {
-    return <section className="v2-group-detail"><div className="container v2-loading-space"><div className="loader-orbit">📚</div></div></section>
+    return <section className="v2-group-detail"><div className="container v2-loading-space"><div className="v3-group-loader"><BookOpen size={44}/></div></div></section>
   }
 
   if (!group) {
@@ -156,7 +157,7 @@ export default function GroupDetail() {
                   if (!lesson) return null
                   return (
                     <Link key={assignment.id} to={`/lecciones/${lesson.id}`} className="v2-assignment-row">
-                      <span className="v2-assignment-icon">{lesson.icon}</span>
+                      <span className="v2-assignment-icon v3-assignment-icon"><LearningIcon name={lesson.id} size={25}/></span>
                       <div><small>{language === 'es' ? 'Asignada por' : 'Assigned by'} {assignment.teacherName}</small><strong>{localized(lesson.title, language)}</strong></div>
                       <span className="v2-play-dot"><Play size={15}/></span>
                     </Link>

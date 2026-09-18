@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, Eraser, RotateCcw, Sparkles, Volume2, X } from 'lucide-react'
+import { Check, Eraser, Lightbulb, RotateCcw, Sparkles, Star, Volume2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { localized } from '../data/lessons.js'
 import { tr } from '../i18n.js'
@@ -119,7 +119,7 @@ function Celebration({ score, language, onAgain }) {
   const passed = score >= 70
   return (
     <motion.div className="result-card" initial={{ scale: .8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-      <div className="result-stars">{passed ? '🌟 ⭐ 🌟' : '⭐ ✨ ⭐'}</div>
+      <div className={`result-stars ${passed ? 'passed' : 'keep-going'}`}><Star/><Star/><Star/></div>
       <h2>{passed ? tr(language, 'great') : tr(language, 'keepTrying')}</h2>
       <div className="score-ring"><strong>{score}%</strong><span>{tr(language, 'score')}</span></div>
       <p>{passed
@@ -214,7 +214,7 @@ export default function LessonPlayer({ lesson, language, onComplete }) {
         <h2>{language === 'es' ? 'Toca los números en orden' : 'Tap the numbers in order'}</h2>
         <div className="sequence-track">{lesson.target.map((n, i) => <span key={n} className={sequence.includes(n) ? 'filled' : ''}>{sequence[i] ?? '?'}</span>)}</div>
         <div className="number-grid">{shuffled.map((number) => <motion.button key={number} whileTap={{ scale: .9 }} disabled={sequence.includes(number)} onClick={() => tapNumber(number)}>{number}</motion.button>)}</div>
-        {mistakes > 0 && <p className="friendly-tip">💡 {language === 'es' ? 'Busca primero el número más pequeño.' : 'Look for the smallest number first.'}</p>}
+        {mistakes > 0 && <p className="friendly-tip"><Lightbulb size={18}/> {language === 'es' ? 'Busca primero el número más pequeño.' : 'Look for the smallest number first.'}</p>}
       </div>
     )
   }
