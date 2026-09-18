@@ -1,15 +1,56 @@
 import { useEffect, useState } from 'react'
-import { Check, Mail, X } from 'lucide-react'
+import { Check, Mail, Sparkles, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { respondToInvitation, subscribeInvitations } from '../services/appService.js'
-import { tr } from '../i18n.js'
 
 export default function Invitations() {
   const { profile, language, refreshDemoProfile } = useAuth()
   const [items, setItems] = useState([])
   const [busy, setBusy] = useState(null)
-  const t=(key)=>tr(language,key)
-  useEffect(()=> profile?.id ? subscribeInvitations(profile.id,setItems) : undefined,[profile?.id])
-  const respond = async (item, accept) => { setBusy(item.id); await respondToInvitation(item,accept,profile); refreshDemoProfile(); setItems((current)=>current.filter((x)=>x.id!==item.id)); setBusy(null) }
-  return <section className="page section-pad"><div className="container narrow-container"><div className="page-heading"><span className="eyebrow"><Mail size={16}/> {t('invitations')}</span><h1>{language==='es'?'Invitaciones a grupos':'Group invitations'}</h1></div>{items.length ? <div className="invite-list">{items.map(item=><article className="invite-card" key={item.id}><div className="invite-icon">✉️</div><div><small>{item.fromName} {language==='es'?'te invitó a':'invited you to'}</small><h3>{item.groupName}</h3><span>{t('pending')}</span></div><div className="invite-actions"><button className="button button-success" disabled={busy===item.id} onClick={()=>respond(item,true)}><Check/>{t('accept')}</button><button className="button button-ghost" disabled={busy===item.id} onClick={()=>respond(item,false)}><X/>{t('reject')}</button></div></article>)}</div> : <div className="empty-state"><span>📭</span><h3>{t('noInvites')}</h3></div>}</div></section>
+
+  useEffect(() => profile?.id ? subscribeInvitations(profile.id, setItems) : undefined, [profile?.id])
+
+  const respond = async (item, accept) => {
+    setBusy(item.id)
+    await respondToInvitation(item, accept, profile)
+    refreshDemoProfile()
+    setItems((current) => current.filter((x) => x.id !== item.id))
+    setBusy(null)
+  }
+
+  return (
+    <section className="v2-invites-page">
+      <div className="container v2-narrow">
+        <div className="v2-page-top">
+          <div><span className="v2-kicker"><Mail size={16}/> {language === 'es' ? 'Bandeja' : 'Inbox'}</span><h1>{language === 'es' ? 'Invitaciones' : 'Invitations'}</h1></div>
+          <span className="v2-count-pill">{items.length}</span>
+        </div>
+
+        {items.length ? (
+          <div className="v2-invite-stack">
+            {items.map((item) => (
+              <article className="v2-invite-card" key={item.id}>
+                <div className="v2-invite-mark"><Mail/></div>
+                <div className="v2-invite-copy">
+                  <span>{item.fromName}</span>
+                  <h3>{item.groupName}</h3>
+                  <small>{language === 'es' ? 'Quiere que formes parte del grupo.' : 'Wants you to join the group.'}</small>
+                </div>
+                <div className="v2-invite-actions">
+                  <button className="accept" disabled={busy === item.id} onClick={() => respond(item, true)}><Check/>{language === 'es' ? 'Aceptar' : 'Accept'}</button>
+                  <button className="reject" disabled={busy === item.id} onClick={() => respond(item, false)}><X/></button>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="v2-empty-panel">
+            <div className="v2-empty-orbit"><Mail/></div>
+            <span className="v2-kicker"><Sparkles size={15}/>{language === 'es' ? 'Todo al día' : 'All caught up'}</span>
+            <h2>{language === 'es' ? 'No hay invitaciones pendientes' : 'No pending invitations'}</h2>
+          </div>
+        )}
+      </div>
+    </section>
+  )
 }

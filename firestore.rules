@@ -1,11 +1,25 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() { return request.auth != null; }
-    function isSelf(uid) { return signedIn() && request.auth.uid == uid; }
-    function isGroupOwner(groupId) {
-      return signedIn() && get(/databases/$(database)/documents/groups/$(groupId)).data.ownerId == request.auth.uid;
+    function signedIn() {
+      return request.auth != null;
     }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function groupExists(groupId) {
+      return exists(/databases/$(database)/documents/groups/$(groupId));
+    }
+
+    function isGroupOwner(groupId) {
+      return signedIn()
+        && groupExists(groupId)
+        && get(/databases/$(database)/documents/groups/$(groupId)).data.ownerId == request.auth.uid;
+    }
+
     function isGroupMember(groupId) {
       return signedIn() && (
         isGroupOwner(groupId) ||
@@ -13,59 +27,115 @@ service cloud.firestore {
       );
     }
 
+    function acceptedInvitationExists(groupId, uid) {
+      return exists(/databases/$(database)/documents/invitations/$(groupId + '_' + uid))
+        && get(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)).data.groupId == groupId
+        && get(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)).data.toUid == uid
+        && get(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)).data.status == 'accepted';
+    }
+
     match /users/{uid} {
-      allow create, read, update: if isSelf(uid);
+      allow read: if isSelf(uid);
+      allow create: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(['email','username','avatar','avatarType','language','userCode','groupIds','createdAt','updatedAt']);
+      allow update: if isSelf(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['username','avatar','avatarType','language','groupIds','updatedAt'])
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.userCode == resource.data.userCode;
       allow delete: if false;
+
       match /progress/{lessonId} {
-        allow read, write: if isSelf(uid);
+        allow read: if isSelf(uid);
+        allow create, update: if isSelf(uid)
+          && request.resource.data.keys().hasOnly(['attempts','lastScore','bestScore','completed','updatedAt']);
+        allow delete: if isSelf(uid);
       }
     }
 
     match /publicProfiles/{uid} {
       allow read: if signedIn();
-      allow create, update: if isSelf(uid);
+      allow create: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(['username','avatar','avatarType','userCode','updatedAt']);
+      allow update: if isSelf(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['username','avatar','avatarType','updatedAt']);
       allow delete: if false;
     }
 
     match /groups/{groupId} {
-      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
-      allow read: if signedIn() && (resource.data.ownerId == request.auth.uid || exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid)));
-      allow update: if isGroupOwner(groupId) && request.resource.data.ownerId == resource.data.ownerId;
+      allow create: if signedIn()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.keys().hasOnly(['name','ownerId','createdAt','updatedAt']);
+      allow read: if isGroupMember(groupId);
+      allow update: if isGroupOwner(groupId)
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','updatedAt']);
       allow delete: if isGroupOwner(groupId);
 
       match /members/{uid} {
         allow read: if isGroupMember(groupId);
-        allow create: if signedIn() && (
-          (isGroupOwner(groupId) && request.resource.data.role == 'teacher') ||
-          (request.auth.uid == uid && request.resource.data.role == 'student' &&
-            exists(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)) &&
-            get(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)).data.toUid == uid &&
-            get(/databases/$(database)/documents/invitations/$(groupId + '_' + uid)).data.groupId == groupId)
-        );
-        allow update: if isGroupOwner(groupId);
+        allow create: if signedIn()
+          && request.resource.data.userId == uid
+          && (
+            (
+              isGroupOwner(groupId)
+              && request.auth.uid == uid
+              && request.resource.data.role == 'teacher'
+            ) ||
+            (
+              request.auth.uid == uid
+              && request.resource.data.role == 'student'
+              && acceptedInvitationExists(groupId, uid)
+            )
+          )
+          && request.resource.data.keys().hasOnly(['userId','username','avatar','avatarType','role','joinedAt']);
+        allow update: if isGroupOwner(groupId)
+          && request.resource.data.userId == resource.data.userId;
         allow delete: if isGroupOwner(groupId) || isSelf(uid);
       }
 
       match /assignments/{assignmentId} {
         allow read: if isGroupMember(groupId);
-        allow create, update, delete: if isGroupOwner(groupId);
+        allow create: if isGroupOwner(groupId)
+          && request.resource.data.teacherId == request.auth.uid
+          && request.resource.data.keys().hasOnly(['lessonId','teacherId','teacherName','createdAt']);
+        allow update, delete: if isGroupOwner(groupId);
       }
 
       match /memberProgress/{uid}/lessons/{lessonId} {
         allow read: if isGroupMember(groupId);
-        allow create, update: if isSelf(uid);
-        allow delete: if isSelf(uid) || isGroupOwner(groupId);
+        allow create, update: if isSelf(uid)
+          && isGroupMember(groupId)
+          && request.resource.data.keys().hasOnly(['attempts','lastScore','bestScore','completed','updatedAt']);
+        allow delete: if (isSelf(uid) && isGroupMember(groupId)) || isGroupOwner(groupId);
       }
     }
 
     match /invitations/{inviteId} {
-      allow read: if signedIn() && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid);
-      allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid && isGroupOwner(request.resource.data.groupId);
-      allow update: if signedIn() && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid)
+      allow read: if signedIn()
+        && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.fromUid == request.auth.uid
+        && isGroupOwner(request.resource.data.groupId)
+        && request.resource.data.status == 'pending'
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.keys().hasOnly(['groupId','groupName','fromUid','fromName','toUid','toName','status','createdAt']);
+      allow update: if signedIn()
+        && resource.data.toUid == request.auth.uid
+        && resource.data.status == 'pending'
+        && request.resource.data.status in ['accepted','rejected']
         && request.resource.data.groupId == resource.data.groupId
+        && request.resource.data.groupName == resource.data.groupName
+        && request.resource.data.fromUid == resource.data.fromUid
+        && request.resource.data.fromName == resource.data.fromName
         && request.resource.data.toUid == resource.data.toUid
-        && request.resource.data.fromUid == resource.data.fromUid;
+        && request.resource.data.toName == resource.data.toName
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','respondedAt']);
       allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

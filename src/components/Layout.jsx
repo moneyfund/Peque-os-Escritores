@@ -1,24 +1,36 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Bell, BookOpen, ChartNoAxesColumnIncreasing, Home, Languages, LogOut, Menu, UserRound, UsersRound, X } from 'lucide-react'
+import { Bell, BookOpen, ChevronDown, Home, Languages, LogOut, Menu, Settings, UserRound, UsersRound, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import Avatar from './Avatar.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { subscribeInvitations, updateUserProfile } from '../services/appService.js'
-import { tr } from '../i18n.js'
 
 export default function Layout({ children }) {
-  const { user, profile, logout, login, language, firebaseReady, refreshDemoProfile } = useAuth()
+  const { user, profile, logout, login, language, refreshDemoProfile } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
   const [inviteCount, setInviteCount] = useState(0)
   const location = useLocation()
-  const t = (key) => tr(language, key)
+  const profileMenuRef = useRef(null)
 
-  useEffect(() => setMenuOpen(false), [location.pathname])
+  useEffect(() => {
+    setMenuOpen(false)
+    setProfileOpen(false)
+  }, [location.pathname])
+
   useEffect(() => {
     if (!profile?.id) return undefined
     return subscribeInvitations(profile.id, (items) => setInviteCount(items.length))
   }, [profile?.id])
+
+  useEffect(() => {
+    const close = (event) => {
+      if (!profileMenuRef.current?.contains(event.target)) setProfileOpen(false)
+    }
+    document.addEventListener('pointerdown', close)
+    return () => document.removeEventListener('pointerdown', close)
+  }, [])
 
   const toggleLanguage = async () => {
     if (!profile) return
@@ -27,69 +39,107 @@ export default function Layout({ children }) {
     refreshDemoProfile()
   }
 
-  const navItems = [
-    { to: '/', label: t('home'), icon: Home },
-    { to: '/aprender', label: t('learn'), icon: BookOpen },
-    ...(user ? [
-      { to: '/avances', label: t('progress'), icon: ChartNoAxesColumnIncreasing },
-      { to: '/grupos', label: t('groups'), icon: UsersRound },
-      { to: '/invitaciones', label: t('invitations'), icon: Bell, badge: inviteCount },
-    ] : []),
+  const primaryNav = [
+    { to: '/', label: language === 'es' ? 'Inicio' : 'Home', icon: Home, end: true },
+    { to: '/aprender', label: language === 'es' ? 'Aprender' : 'Learn', icon: BookOpen },
+    ...(user ? [{ to: '/grupos', label: language === 'es' ? 'Grupos' : 'Groups', icon: UsersRound }] : []),
   ]
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="topbar-inner">
-          <Link to="/" className="brand" aria-label="Pequeños Escritores">
-            <span className="brand-mark">📖</span>
+    <div className="app-shell v2-shell">
+      <header className="v2-topbar">
+        <div className="container v2-topbar-inner">
+          <Link to="/" className="v2-brand" aria-label="Pequeños Escritores">
+            <span className="v2-brand-book"><i/><i/><i/></span>
             <span><strong>Pequeños</strong><small>Escritores</small></span>
           </Link>
 
-          <nav className="desktop-nav" aria-label="Principal">
-            {navItems.map(({ to, label, icon: Icon, badge }) => (
-              <NavLink key={to} to={to} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                <Icon size={18} /> <span>{label}</span>{badge > 0 && <b className="badge">{badge}</b>}
+          <nav className="v2-desktop-nav" aria-label="Principal">
+            {primaryNav.map(({ to, label, icon: Icon, end }) => (
+              <NavLink end={end} key={to} to={to} className={({ isActive }) => isActive ? 'active' : ''}>
+                <Icon size={17}/><span>{label}</span>
               </NavLink>
             ))}
           </nav>
 
-          <div className="top-actions">
-            <button className="icon-button" onClick={toggleLanguage} disabled={!profile} title={t('language')}>
-              <Languages size={20} /><span>{language.toUpperCase()}</span>
-            </button>
-            {user && profile ? (
-              <Link to="/perfil" className="profile-pill">
-                <Avatar avatar={profile.avatar} avatarType={profile.avatarType} size="sm" />
-                <span>{profile.username}</span>
+          <div className="v2-top-actions">
+            {user && (
+              <Link to="/invitaciones" className="v2-round-action" aria-label="Invitaciones">
+                <Bell size={19}/>
+                {inviteCount > 0 && <b>{inviteCount}</b>}
               </Link>
-            ) : (
-              <button className="button button-small" onClick={login}>{firebaseReady ? t('login') : t('demo')}</button>
             )}
-            <button className="mobile-menu-button" onClick={() => setMenuOpen(true)} aria-label="Menú"><Menu /></button>
+
+            {user && profile ? (
+              <div className="v2-profile-menu-wrap" ref={profileMenuRef}>
+                <button className="v2-profile-trigger" onClick={() => setProfileOpen((value) => !value)}>
+                  <Avatar avatar={profile.avatar} avatarType={profile.avatarType} size="sm"/>
+                  <span>{profile.username}</span>
+                  <ChevronDown size={15}/>
+                </button>
+
+                <AnimatePresence>
+                  {profileOpen && (
+                    <motion.div className="v2-profile-menu" initial={{ opacity: 0, y: -8, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: .98 }}>
+                      <div className="v2-profile-menu-head">
+                        <Avatar avatar={profile.avatar} avatarType={profile.avatarType} size="md"/>
+                        <div><strong>{profile.username}</strong><small>{profile.userCode}</small></div>
+                      </div>
+                      <Link to="/perfil"><UserRound size={17}/>{language === 'es' ? 'Editar perfil' : 'Edit profile'}</Link>
+                      <Link to="/avances"><Settings size={17}/>{language === 'es' ? 'Mis avances' : 'My progress'}</Link>
+                      <button onClick={toggleLanguage}><Languages size={17}/>{language === 'es' ? 'Cambiar a English' : 'Switch to Español'}</button>
+                      <button className="danger" onClick={logout}><LogOut size={17}/>{language === 'es' ? 'Cerrar sesión' : 'Sign out'}</button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <button className="v2-login-button" onClick={login}>
+                <span className="google-g">G</span>
+                {language === 'es' ? 'Entrar' : 'Sign in'}
+              </button>
+            )}
+
+            <button className="v2-menu-button" onClick={() => setMenuOpen(true)} aria-label="Menú"><Menu size={22}/></button>
           </div>
         </div>
       </header>
 
-      {!firebaseReady && <div className="demo-banner">🧪 {t('demoMode')}</div>}
-
       <main>{children}</main>
+
+      {user && (
+        <nav className="v2-mobile-dock" aria-label="Navegación móvil">
+          <NavLink end to="/"><Home/><span>{language === 'es' ? 'Inicio' : 'Home'}</span></NavLink>
+          <NavLink to="/aprender"><BookOpen/><span>{language === 'es' ? 'Aprender' : 'Learn'}</span></NavLink>
+          <NavLink to="/grupos"><UsersRound/><span>{language === 'es' ? 'Grupos' : 'Groups'}</span></NavLink>
+          <NavLink to="/invitaciones" className="dock-invites"><Bell/><span>{language === 'es' ? 'Avisos' : 'Invites'}</span>{inviteCount > 0 && <b>{inviteCount}</b>}</NavLink>
+        </nav>
+      )}
 
       <AnimatePresence>
         {menuOpen && (
           <>
-            <motion.button className="drawer-backdrop" aria-label="Cerrar menú" onClick={() => setMenuOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-            <motion.aside className="drawer" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+            <motion.button className="drawer-backdrop v2-drawer-backdrop" aria-label="Cerrar menú" onClick={() => setMenuOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+            <motion.aside className="drawer v2-drawer" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 320, damping: 32 }}>
               <div className="drawer-header">
-                <span className="brand"><span className="brand-mark">📖</span><span><strong>Pequeños</strong><small>Escritores</small></span></span>
-                <button className="icon-only" onClick={() => setMenuOpen(false)}><X /></button>
+                <span className="v2-brand"><span className="v2-brand-book"><i/><i/><i/></span><span><strong>Pequeños</strong><small>Escritores</small></span></span>
+                <button className="icon-only" onClick={() => setMenuOpen(false)}><X/></button>
               </div>
-              {user && profile && <div className="drawer-profile"><Avatar avatar={profile.avatar} avatarType={profile.avatarType} size="lg" /><div><strong>{profile.username}</strong><small>{profile.userCode}</small></div></div>}
+
+              {profile && (
+                <div className="v2-drawer-profile">
+                  <Avatar avatar={profile.avatar} avatarType={profile.avatarType} size="lg"/>
+                  <div><strong>{profile.username}</strong><small>{profile.userCode}</small></div>
+                </div>
+              )}
+
               <div className="drawer-links">
-                {navItems.map(({ to, label, icon: Icon, badge }) => <NavLink key={to} to={to}><Icon />{label}{badge > 0 && <b className="badge">{badge}</b>}</NavLink>)}
-                {user && <NavLink to="/perfil"><UserRound />{t('profile')}</NavLink>}
-                <button onClick={toggleLanguage}><Languages />{language === 'es' ? t('english') : t('spanish')}</button>
-                {user ? <button onClick={logout}><LogOut />{t('logout')}</button> : <button onClick={login}><UserRound />{firebaseReady ? t('login') : t('demo')}</button>}
+                {primaryNav.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to}><Icon/>{label}</NavLink>)}
+                {user && <NavLink to="/invitaciones"><Bell/> {language === 'es' ? 'Invitaciones' : 'Invitations'} {inviteCount > 0 && <b className="badge">{inviteCount}</b>}</NavLink>}
+                {user && <NavLink to="/avances"><Settings/> {language === 'es' ? 'Mis avances' : 'My progress'}</NavLink>}
+                {user && <NavLink to="/perfil"><UserRound/> {language === 'es' ? 'Editar perfil' : 'Edit profile'}</NavLink>}
+                {profile && <button onClick={toggleLanguage}><Languages/> {language === 'es' ? 'English' : 'Español'}</button>}
+                {user ? <button onClick={logout}><LogOut/> {language === 'es' ? 'Cerrar sesión' : 'Sign out'}</button> : <button onClick={login}><UserRound/> {language === 'es' ? 'Entrar con Google' : 'Continue with Google'}</button>}
               </div>
             </motion.aside>
           </>
