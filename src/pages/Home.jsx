@@ -7,6 +7,7 @@ import { categories, lessons, localized } from '../data/lessons.js'
 import { listAssignments, listGroups, listUserProgress, subscribeInvitations } from '../services/appService.js'
 import LessonCard from '../components/LessonCard.jsx'
 import LearningIcon from '../components/LearningIcon.jsx'
+import CategoryArtwork from '../components/CategoryArtwork.jsx'
 
 const floatTransition = (delay = 0, duration = 4.2) => ({
   duration,
@@ -102,7 +103,7 @@ export default function Home() {
             <motion.div key={category.id} whileHover={{ y: -7, rotate: index % 2 ? 1 : -1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}>
               <Link to={`/aprender?categoria=${category.id}`} className={`v3-world-tile world-${category.color}`}>
                 <span className="v3-world-number">0{index + 1}</span>
-                <span className="v3-world-icon"><LearningIcon name={category.id} size={31}/></span>
+                <span className="v3-world-icon"><CategoryArtwork name={category.id} size={74}/></span>
                 <strong>{localized(category.title, language)}</strong>
                 <ArrowRight size={17}/>
               </Link>
@@ -193,7 +194,7 @@ export default function Home() {
               <motion.div key={category.id} whileHover={{ y: -8, rotate: index % 2 ? 1.4 : -1.4 }} transition={{ type: 'spring', stiffness: 280, damping: 18 }}>
                 <Link to={`/aprender?categoria=${category.id}`} className={`v3-world-card world-${category.color}`}>
                   <span className="v3-world-index">0{index + 1}</span>
-                  <div className="v3-world-icon-large"><LearningIcon name={category.id} size={40}/></div>
+                  <div className="v3-world-icon-large"><CategoryArtwork name={category.id} size={108}/></div>
                   <div className="v3-world-copy"><strong>{localized(category.title, language)}</strong><small>{done}/{total.length}</small></div>
                   <div className="v3-world-progress"><span style={{ width: `${(done / total.length) * 100}%` }}/></div>
                 </Link>

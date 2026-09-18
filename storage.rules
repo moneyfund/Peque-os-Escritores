@@ -10,7 +10,12 @@ service firebase.storage {
       return signedIn() && request.auth.uid == uid;
     }
 
-    function isValidProfileImage() {
+    function isGroupOwner(groupId) {
+      return signedIn()
+        && firestore.get(/databases/(default)/documents/groups/$(groupId)).data.ownerId == request.auth.uid;
+    }
+
+    function isValidImage() {
       return request.resource != null
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
@@ -20,8 +25,16 @@ service firebase.storage {
       allow read: if signedIn();
       allow create, update: if isOwner(uid)
         && fileName.matches('profile\\..+')
-        && isValidProfileImage();
+        && isValidImage();
       allow delete: if isOwner(uid);
+    }
+
+    match /groups/{groupId}/{fileName} {
+      allow read: if signedIn();
+      allow create, update: if isGroupOwner(groupId)
+        && fileName.matches('profile\\..+')
+        && isValidImage();
+      allow delete: if isGroupOwner(groupId);
     }
 
     match /{allPaths=**} {

@@ -64,11 +64,14 @@ service cloud.firestore {
     match /groups/{groupId} {
       allow create: if signedIn()
         && request.resource.data.ownerId == request.auth.uid
-        && request.resource.data.keys().hasOnly(['name','ownerId','createdAt','updatedAt']);
+        && request.resource.data.keys().hasOnly(['name','ownerId','avatar','avatarType','createdAt','updatedAt']);
+
       allow read: if isGroupMember(groupId);
+
       allow update: if isGroupOwner(groupId)
         && request.resource.data.ownerId == resource.data.ownerId
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','updatedAt']);
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','avatar','avatarType','updatedAt']);
+
       allow delete: if isGroupOwner(groupId);
 
       match /members/{uid} {
@@ -88,8 +91,10 @@ service cloud.firestore {
             )
           )
           && request.resource.data.keys().hasOnly(['userId','username','avatar','avatarType','role','joinedAt']);
+
         allow update: if isGroupOwner(groupId)
           && request.resource.data.userId == resource.data.userId;
+
         allow delete: if isGroupOwner(groupId) || isSelf(uid);
       }
 
@@ -113,12 +118,14 @@ service cloud.firestore {
     match /invitations/{inviteId} {
       allow read: if signedIn()
         && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid);
+
       allow create: if signedIn()
         && request.resource.data.fromUid == request.auth.uid
         && isGroupOwner(request.resource.data.groupId)
         && request.resource.data.status == 'pending'
         && request.resource.data.toUid != request.auth.uid
         && request.resource.data.keys().hasOnly(['groupId','groupName','fromUid','fromName','toUid','toName','status','createdAt']);
+
       allow update: if signedIn()
         && resource.data.toUid == request.auth.uid
         && resource.data.status == 'pending'
@@ -131,6 +138,7 @@ service cloud.firestore {
         && request.resource.data.toName == resource.data.toName
         && request.resource.data.createdAt == resource.data.createdAt
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','respondedAt']);
+
       allow delete: if false;
     }
 

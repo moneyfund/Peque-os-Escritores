@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { listUserProgress } from '../services/appService.js'
 import LessonCard from '../components/LessonCard.jsx'
 import LearningIcon from '../components/LearningIcon.jsx'
+import CategoryArtwork from '../components/CategoryArtwork.jsx'
 
 export default function Learn() {
   const { profile, language } = useAuth()
@@ -38,7 +39,7 @@ export default function Learn() {
           </button>
           {categories.map((item) => (
             <button key={item.id} className={category === item.id ? 'active' : ''} onClick={() => setSearchParams({ categoria: item.id })}>
-              <LearningIcon name={item.id} size={20}/><strong>{localized(item.title, language)}</strong>
+              <CategoryArtwork name={item.id} size={39} compact/><strong>{localized(item.title, language)}</strong>
             </button>
           ))}
         </div>

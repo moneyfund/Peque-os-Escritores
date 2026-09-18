@@ -135,6 +135,47 @@ export async function uploadProfileAvatar(uid, file) {
   return getDownloadURL(fileRef)
 }
 
+export async function uploadGroupAvatar(groupId, file) {
+  if (!file) return null
+  if (!file.type?.startsWith('image/')) throw new Error('El archivo debe ser una imagen.')
+  if (file.size > 5 * 1024 * 1024) throw new Error('La imagen debe pesar menos de 5 MB.')
+
+  if (!firebaseReady) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const fileRef = ref(storage, `groups/${groupId}/profile.${extension}`)
+  await uploadBytes(fileRef, file, { contentType: file.type })
+  return getDownloadURL(fileRef)
+}
+
+export async function updateGroupProfile(groupId, patch) {
+  const avatarPatch = {
+    avatar: patch.avatar || '',
+    avatarType: patch.avatarType === 'upload' ? 'upload' : 'builtin',
+  }
+
+  if (!firebaseReady) {
+    const data = readDemoData()
+    if (!data.groups[groupId]) throw new Error('Grupo no encontrado.')
+    data.groups[groupId] = { ...data.groups[groupId], ...avatarPatch, updatedAt: Date.now() }
+    writeDemoData(data)
+    return data.groups[groupId]
+  }
+
+  await setDoc(doc(db, 'groups', groupId), {
+    ...avatarPatch,
+    updatedAt: serverTimestamp(),
+  }, { merge: true })
+  return avatarPatch
+}
+
 export async function listUserProgress(uid) {
   if (!firebaseReady) {
     const data = readDemoData()
@@ -197,6 +238,8 @@ export async function createGroup(uid, profile, name) {
       id: groupId,
       name: cleanName,
       ownerId: uid,
+      avatar: '',
+      avatarType: 'builtin',
       createdAt: Date.now(),
       members: {
         [uid]: { userId: uid, username: profile.username, avatar: profile.avatar, avatarType: profile.avatarType, role: 'teacher' },
@@ -211,6 +254,8 @@ export async function createGroup(uid, profile, name) {
   const groupRef = await addDoc(collection(db, 'groups'), {
     name: cleanName,
     ownerId: uid,
+    avatar: '',
+    avatarType: 'builtin',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })

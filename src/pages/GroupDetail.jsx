@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowLeft, BookOpen, BookPlus, CheckCircle2, Copy, Play, Send, Target, UsersRound } from 'lucide-react'
+import { ArrowLeft, BookOpen, BookPlus, Camera, CheckCircle2, Copy, Play, Send, Target, UsersRound } from 'lucide-react'
 import LearningIcon from '../components/LearningIcon.jsx'
 import { Link, useParams } from 'react-router-dom'
 import Avatar from '../components/Avatar.jsx'
+import GroupAvatar from '../components/GroupAvatar.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { getLesson, lessons, localized } from '../data/lessons.js'
 import {
@@ -12,6 +13,8 @@ import {
   getGroupMembers,
   listAssignments,
   sendGroupInvite,
+  updateGroupProfile,
+  uploadGroupAvatar,
 } from '../services/appService.js'
 
 export default function GroupDetail() {
@@ -25,6 +28,7 @@ export default function GroupDetail() {
   const [selectedLesson, setSelectedLesson] = useState(lessons[0].id)
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(true)
+  const [uploadingGroupPhoto, setUploadingGroupPhoto] = useState(false)
 
   const load = async () => {
     setLoading(true)
@@ -51,7 +55,8 @@ export default function GroupDetail() {
   }, [groupId])
 
   const currentMembership = members.find((member) => (member.userId || member.id) === profile?.id)
-  const isTeacher = group?.ownerId === profile?.id || currentMembership?.role === 'teacher'
+  const isOwner = group?.ownerId === profile?.id
+  const isTeacher = isOwner || currentMembership?.role === 'teacher'
 
   const sendInvite = async (event) => {
     event.preventDefault()
@@ -83,6 +88,32 @@ export default function GroupDetail() {
     setStatus(language === 'es' ? 'ID del grupo copiado' : 'Group ID copied')
   }
 
+  const changeGroupPhoto = async (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setStatus(language === 'es' ? 'Selecciona una imagen.' : 'Choose an image file.')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setStatus(language === 'es' ? 'La imagen debe pesar menos de 5 MB.' : 'Image must be under 5 MB.')
+      return
+    }
+    setUploadingGroupPhoto(true)
+    setStatus('')
+    try {
+      const avatar = await uploadGroupAvatar(groupId, file)
+      await updateGroupProfile(groupId, { avatar, avatarType: 'upload' })
+      setStatus(language === 'es' ? 'Foto del grupo actualizada' : 'Group photo updated')
+      await load()
+    } catch (err) {
+      setStatus(err.message)
+    } finally {
+      setUploadingGroupPhoto(false)
+      event.target.value = ''
+    }
+  }
+
   const classStats = useMemo(() => {
     const allRows = Object.values(memberProgress).flat()
     const completed = allRows.filter((row) => row.completed).length
@@ -104,7 +135,16 @@ export default function GroupDetail() {
         <Link to="/grupos" className="v2-back-link"><ArrowLeft size={17}/>{language === 'es' ? 'Mis grupos' : 'My groups'}</Link>
 
         <div className="v2-class-hero">
-          <div className="v2-class-symbol"><span/><span/><span/></div>
+          <div className="group-hero-avatar-zone">
+            <GroupAvatar avatar={group.avatar} avatarType={group.avatarType} size="xl"/>
+            {isOwner && (
+              <label className="group-photo-edit">
+                <input type="file" accept="image/*" onChange={changeGroupPhoto} disabled={uploadingGroupPhoto}/>
+                <Camera size={15}/>
+                {uploadingGroupPhoto ? (language === 'es' ? 'Subiendo...' : 'Uploading...') : (language === 'es' ? 'Cambiar foto' : 'Change photo')}
+              </label>
+            )}
+          </div>
           <div className="v2-class-title">
             <small>{isTeacher ? (language === 'es' ? 'Espacio docente' : 'Teacher space') : (language === 'es' ? 'Mi clase' : 'My class')}</small>
             <h1>{group.name}</h1>
