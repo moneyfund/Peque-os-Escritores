@@ -18,7 +18,7 @@ const floatTransition = (delay = 0, duration = 4.2) => ({
 })
 
 export default function Home() {
-  const { user, profile, login, language } = useAuth()
+  const { user, profile, login, language, authError } = useAuth()
   const [progress, setProgress] = useState([])
   const [groups, setGroups] = useState([])
   const [assignments, setAssignments] = useState([])
@@ -73,6 +73,7 @@ export default function Home() {
                 <button className="v3-primary-cta" onClick={login}><span className="google-g">G</span>{language === 'es' ? 'Continuar con Google' : 'Continue with Google'}<ArrowRight size={17}/></button>
                 <Link className="v3-secondary-cta" to="/aprender"><Play size={17}/>{language === 'es' ? 'Explorar actividades' : 'Explore activities'}</Link>
               </div>
+              {authError && <div className="v3-auth-error" role="alert">{authError}</div>}
             </motion.div>
 
             <div className="v3-play-stage" aria-hidden="true">

@@ -1983,3 +1983,16 @@ body{
   background:linear-gradient(145deg,#daf5e6,#edf9f2)!important;
   color:#33785a!important;
 }
+
+.v3-auth-error{
+  max-width:520px;
+  margin-top:12px;
+  padding:11px 13px;
+  border-radius:14px;
+  color:#9a3d51;
+  background:rgba(255,230,236,.82);
+  border:1px solid rgba(198,78,104,.16);
+  font-size:11px;
+  font-weight:800;
+  line-height:1.45;
+}

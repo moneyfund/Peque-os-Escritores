@@ -13,9 +13,17 @@ import {
 import { getStorage } from 'firebase/storage'
 import { getAnalytics, isSupported as analyticsSupported } from 'firebase/analytics'
 
+export const productionAuthDomain =
+  import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ||
+  'pequenos-escritores-moneyfunds-projects.vercel.app'
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyC1aqcls9eZu76vIcz_QxzXDSLobF71u8w',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'pequenos-escritores.firebaseapp.com',
+  // IMPORTANT:
+  // The production Vercel domain is intentionally used here instead of
+  // pequenos-escritores.firebaseapp.com. Vercel proxies /__/auth/* back to
+  // Firebase Hosting so mobile browsers keep the OAuth helper same-origin.
+  authDomain: productionAuthDomain,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'pequenos-escritores',
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'pequenos-escritores.firebasestorage.app',
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '605491809632',
@@ -39,14 +47,17 @@ if (firebaseReady) {
   authPersistenceReady = setPersistence(auth, browserLocalPersistence).catch((error) => {
     console.warn('Firebase auth persistence could not be initialized.', error)
   })
+
   db = initializeFirestore(app, {
     localCache: persistentLocalCache({
       tabManager: persistentMultipleTabManager(),
     }),
   })
+
   storage = getStorage(app)
   googleProvider = new GoogleAuthProvider()
   googleProvider.setCustomParameters({ prompt: 'select_account' })
+
   analyticsSupported().then((supported) => {
     if (supported) analytics = getAnalytics(app)
   }).catch(() => {})
