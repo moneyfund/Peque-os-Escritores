@@ -31,6 +31,8 @@ const iconMap = {
   'count-objects': Calculator,
   'number-order': ListOrdered,
   'trace-numbers': Pencil,
+  'trace-lines-basic': Pencil,
+  'trace-geometric-shapes': Shapes,
   'find-color': Palette,
   'listen-colors': Volume2,
   'identify-shapes': Shapes,

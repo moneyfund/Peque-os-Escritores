@@ -1,4 +1,4 @@
-const CACHE = 'pequenos-escritores-v9-clean-auth'
+const CACHE = 'pequenos-escritores-v10-smart-trace'
 const CORE = ['/', '/icon.svg', '/manifest.webmanifest']
 
 self.addEventListener('install', (event) => {

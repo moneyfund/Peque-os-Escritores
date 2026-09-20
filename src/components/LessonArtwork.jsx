@@ -28,6 +28,14 @@ function ColorFind() {
 function ListenColors() {
   return <svg viewBox="0 0 120 100"><defs dangerouslySetInnerHTML={{__html:defs}}/><g filter="url(#laShadow)"><path d="M18 43h18l18-15v44L36 57H18z" fill="#6d5ce6"/><path d="M62 36c9 7 9 20 0 27M70 28c15 13 15 31 0 43" fill="none" stroke="#6d5ce6" strokeWidth="5" strokeLinecap="round"/><circle cx="95" cy="31" r="12" fill="#ff6382"/><circle cx="96" cy="63" r="12" fill="#4fa7ff"/><circle cx="79" cy="79" r="11" fill="#ffd24d"/></g></svg>
 }
+
+function TraceLines() {
+  return <svg viewBox="0 0 120 100"><defs dangerouslySetInnerHTML={{__html:defs}}/><g filter="url(#laShadow)" fill="none" strokeLinecap="round"><path d="M13 24h94" stroke="#ff6f95" strokeWidth="8"/><path d="M17 53c18-22 36-22 54 0s27 20 38 4" stroke="#5f9ef7" strokeWidth="8"/><path d="M16 82l25-18 24 18 25-18 17 12" stroke="#55ca8f" strokeWidth="8"/></g><circle cx="13" cy="24" r="5" fill="#ffd04c"/></svg>
+}
+function TraceGeometry() {
+  return <svg viewBox="0 0 120 100"><defs dangerouslySetInnerHTML={{__html:defs}}/><g filter="url(#laShadow)" fill="none" strokeWidth="8" strokeLinejoin="round"><circle cx="29" cy="31" r="18" stroke="#ff6688"/><path d="M60 49L79 15l19 34z" stroke="#ffd04d"/><rect x="18" y="63" width="34" height="27" rx="4" stroke="#5d9ff7"/><path d="M82 60l22 15-22 15-22-15z" stroke="#67cf94"/></g></svg>
+}
+
 function IdentifyShapes() {
   return <svg viewBox="0 0 120 100"><defs dangerouslySetInnerHTML={{__html:defs}}/><g filter="url(#laShadow)"><circle cx="30" cy="31" r="17" fill="#ff6688"/><rect x="54" y="16" width="33" height="33" rx="8" fill="#5a9cf7"/><path d="M31 81L50 52l19 29z" fill="#ffd14c"/><path d="M82 83l15-28 15 28z" fill="#65cf93"/></g><path d="M93 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#fff" opacity=".9"/></svg>
 }
@@ -48,6 +56,8 @@ const artMap = {
   'count-objects': CountObjects,
   'number-order': NumberOrder,
   'trace-numbers': TraceNumbers,
+  'trace-lines-basic': TraceLines,
+  'trace-geometric-shapes': TraceGeometry,
   'find-color': ColorFind,
   'listen-colors': ListenColors,
   'identify-shapes': IdentifyShapes,

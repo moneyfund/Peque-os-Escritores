@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
-import { Check, Eraser, Lightbulb, RotateCcw, Sparkles, Star, Volume2, X } from 'lucide-react'
+import { useState } from 'react'
+import { Check, Lightbulb, RotateCcw, Sparkles, Star, Volume2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { localized } from '../data/lessons.js'
 import { tr } from '../i18n.js'
+import TracePractice from './TracePractice.jsx'
 
 const speak = (text, language) => {
   if (!('speechSynthesis' in window)) return
@@ -12,103 +13,6 @@ const speak = (text, language) => {
   utterance.rate = 0.78
   utterance.pitch = 1.08
   window.speechSynthesis.speak(utterance)
-}
-
-function TraceCanvas({ target, language, onReadyChange }) {
-  const canvasRef = useRef(null)
-  const drawing = useRef(false)
-  const last = useRef(null)
-  const distance = useRef(0)
-
-  const drawGuide = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = '#f5f1ff'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = '900 250px ui-rounded, system-ui, sans-serif'
-    ctx.strokeStyle = '#d7cfff'
-    ctx.lineWidth = 18
-    ctx.setLineDash([14, 16])
-    ctx.strokeText(target, canvas.width / 2, canvas.height / 2 + 10)
-    ctx.setLineDash([])
-    ctx.fillStyle = '#ffffff'
-    ctx.globalAlpha = .32
-    ctx.fillText(target, canvas.width / 2, canvas.height / 2 + 10)
-    ctx.globalAlpha = 1
-  }
-
-  useEffect(() => {
-    distance.current = 0
-    onReadyChange(false)
-    drawGuide()
-  }, [target])
-
-  const point = (event) => {
-    const canvas = canvasRef.current
-    const rect = canvas.getBoundingClientRect()
-    return {
-      x: (event.clientX - rect.left) * (canvas.width / rect.width),
-      y: (event.clientY - rect.top) * (canvas.height / rect.height),
-    }
-  }
-
-  const start = (event) => {
-    event.currentTarget.setPointerCapture?.(event.pointerId)
-    drawing.current = true
-    last.current = point(event)
-  }
-
-  const move = (event) => {
-    if (!drawing.current) return
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    const next = point(event)
-    const prev = last.current
-    ctx.beginPath()
-    ctx.moveTo(prev.x, prev.y)
-    ctx.lineTo(next.x, next.y)
-    ctx.strokeStyle = '#6f54ff'
-    ctx.lineWidth = 20
-    ctx.lineCap = 'round'
-    ctx.lineJoin = 'round'
-    ctx.stroke()
-    distance.current += Math.hypot(next.x - prev.x, next.y - prev.y)
-    if (distance.current > 240) onReadyChange(true)
-    last.current = next
-  }
-
-  const stop = () => {
-    drawing.current = false
-    last.current = null
-  }
-
-  const clear = () => {
-    distance.current = 0
-    onReadyChange(false)
-    drawGuide()
-  }
-
-  return (
-    <div className="trace-wrap">
-      <div className="trace-instruction">{language === 'es' ? 'Repasa la figura varias veces' : 'Trace over the shape a few times'}</div>
-      <canvas
-        ref={canvasRef}
-        className="trace-canvas"
-        width="640"
-        height="380"
-        onPointerDown={start}
-        onPointerMove={move}
-        onPointerUp={stop}
-        onPointerCancel={stop}
-        onPointerLeave={stop}
-      />
-      <button className="button button-ghost" onClick={clear}><Eraser size={18} />{tr(language, 'clear')}</button>
-    </div>
-  )
 }
 
 function ShapeVisual({ shape }) {
@@ -123,7 +27,7 @@ function Celebration({ score, language, onAgain }) {
       <h2>{passed ? tr(language, 'great') : tr(language, 'keepTrying')}</h2>
       <div className="score-ring"><strong>{score}%</strong><span>{tr(language, 'score')}</span></div>
       <p>{passed
-        ? (language === 'es' ? '¡Terminaste la lección! Tu progreso quedó guardado.' : 'You finished the lesson! Your progress was saved.')
+        ? (language === 'es' ? '¡Terminaste la lección! Tu puntuación ya está lista.' : 'You finished the lesson! Your score is ready.')
         : (language === 'es' ? 'Practica una vez más y verás cómo cada intento se vuelve más fácil.' : 'Try once more and each attempt will feel easier.')}
       </p>
       <button className="button" onClick={onAgain}><RotateCcw size={18} />{tr(language, 'tryAgain')}</button>
@@ -136,7 +40,6 @@ export default function LessonPlayer({ lesson, language, onComplete }) {
   const [selected, setSelected] = useState(null)
   const [correctCount, setCorrectCount] = useState(0)
   const [result, setResult] = useState(null)
-  const [traceReady, setTraceReady] = useState(false)
   const [sequence, setSequence] = useState([])
   const [mistakes, setMistakes] = useState(0)
 
@@ -145,7 +48,6 @@ export default function LessonPlayer({ lesson, language, onComplete }) {
     setSelected(null)
     setCorrectCount(0)
     setResult(null)
-    setTraceReady(false)
     setSequence([])
     setMistakes(0)
   }
@@ -179,23 +81,12 @@ export default function LessonPlayer({ lesson, language, onComplete }) {
   if (result !== null) return <Celebration score={result} language={language} onAgain={reset} />
 
   if (lesson.type === 'trace') {
-    const target = lesson.targets[index]
-    const nextTrace = () => {
-      if (!traceReady) return
-      if (index === lesson.targets.length - 1) finish(100)
-      else {
-        setIndex((value) => value + 1)
-        setTraceReady(false)
-      }
-    }
     return (
-      <div className="activity-card">
-        <div className="activity-progress"><span style={{ width: `${((index + 1) / lesson.targets.length) * 100}%` }} /></div>
-        <div className="activity-kicker">{index + 1} / {lesson.targets.length}</div>
-        <h2>{language === 'es' ? `Traza ${target}` : `Trace ${target}`}</h2>
-        <TraceCanvas target={target} language={language} onReadyChange={setTraceReady} />
-        <button className="button button-wide" disabled={!traceReady} onClick={nextTrace}><Check size={20} />{index === lesson.targets.length - 1 ? tr(language, 'done') : tr(language, 'next')}</button>
-      </div>
+      <TracePractice
+        targets={lesson.targets}
+        language={language}
+        onComplete={finish}
+      />
     )
   }
 

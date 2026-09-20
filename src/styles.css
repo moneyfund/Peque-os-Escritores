@@ -2002,3 +2002,256 @@ body{
   color:#9b4054!important;
   border:1px solid rgba(197,73,102,.18);
 }
+
+
+/* ==========================================================
+   V10 — SMART TRACE ENGINE
+   ========================================================== */
+.trace-activity-card{
+  max-width:900px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.trace-topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:6px;
+}
+.trace-pass-note{
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.58);
+  color:#68799a;
+  font-size:9px;
+  font-weight:900;
+}
+.trace-practice{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.trace-help-banner{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:10px;
+  align-items:center;
+  padding:11px 13px;
+  border-radius:18px;
+  background:linear-gradient(145deg,#fff2c7,#fff8df);
+  border:1px solid rgba(208,169,64,.14);
+}
+.trace-help-banner>span{
+  width:38px;
+  height:38px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:linear-gradient(145deg,#ffad4c,#ff7c74);
+  box-shadow:0 8px 16px rgba(221,124,66,.18);
+}
+.trace-help-banner div{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.trace-help-banner strong{font-size:11px;color:#5e557a}
+.trace-help-banner small{font-size:9px;color:#8a7e92}
+.trace-help-banner button{
+  min-height:35px;
+  padding:0 11px;
+  border:0;
+  border-radius:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:#6559b6;
+  background:rgba(255,255,255,.65);
+  font-size:9px;
+  font-weight:900;
+}
+.trace-stage{
+  position:relative;
+  width:min(100%,720px);
+  aspect-ratio:320/220;
+  margin:0 auto;
+  overflow:hidden;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 15% 12%,rgba(255,255,255,.9),transparent 26%),
+    linear-gradient(145deg,#f5f0ff,#edf7ff);
+  border:1px solid rgba(112,116,193,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 16px 34px rgba(62,77,129,.09);
+}
+.trace-guide-svg,
+.trace-drawing-canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.trace-guide-svg{
+  z-index:1;
+  overflow:visible;
+}
+.trace-guide-path{
+  fill:none;
+  stroke:#b7acef;
+  stroke-width:7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:.035 .025;
+  opacity:.92;
+  vector-effect:non-scaling-stroke;
+}
+.trace-drawing-canvas{
+  z-index:2;
+  display:block;
+  touch-action:none;
+  cursor:crosshair;
+  background:transparent!important;
+}
+.trace-start-dot{
+  fill:#57ce8e;
+  stroke:#fff;
+  stroke-width:3;
+  filter:drop-shadow(0 3px 5px rgba(57,154,101,.25));
+}
+.trace-start-label{
+  position:absolute;
+  z-index:4;
+  transform:translate(-50%,-135%);
+  padding:4px 7px;
+  border-radius:999px;
+  color:#32805b;
+  background:rgba(225,249,236,.94);
+  border:1px solid rgba(78,184,128,.14);
+  font-size:8px;
+  font-weight:950;
+  pointer-events:none;
+}
+.trace-guide-hand{
+  position:absolute;
+  z-index:5;
+  width:46px;
+  height:46px;
+  transform:translate(-15%,-10%);
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  color:#fff;
+  background:linear-gradient(145deg,#ffb347,#ff7f78);
+  border:3px solid rgba(255,255,255,.9);
+  box-shadow:0 10px 22px rgba(210,106,80,.24);
+  pointer-events:none;
+}
+.trace-score-card{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:12px 14px;
+  border-radius:18px;
+}
+.trace-score-card.accepted{
+  background:linear-gradient(145deg,#dcf6e7,#effbf4);
+  border:1px solid rgba(73,183,124,.16);
+}
+.trace-score-card.retry{
+  background:linear-gradient(145deg,#fff0c8,#fff8e6);
+  border:1px solid rgba(214,158,52,.16);
+}
+.trace-score-main{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.trace-score-main>span{
+  width:39px;
+  height:39px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:linear-gradient(145deg,#62cd92,#43b878);
+}
+.trace-score-card.retry .trace-score-main>span{
+  background:linear-gradient(145deg,#ffbd59,#ee9442);
+}
+.trace-score-main div{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.trace-score-main strong{
+  color:#234c70;
+  font-size:22px;
+  line-height:1;
+}
+.trace-score-main small{
+  color:#71809a;
+  font-size:9px;
+  font-weight:750;
+}
+.trace-score-breakdown{
+  display:flex;
+  gap:7px;
+}
+.trace-score-breakdown span{
+  min-width:74px;
+  padding:7px 9px;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  text-align:center;
+  color:#77839a;
+  background:rgba(255,255,255,.62);
+  font-size:8px;
+  font-weight:850;
+}
+.trace-score-breakdown b{
+  color:#345372;
+  font-size:14px;
+}
+.trace-actions{
+  display:flex;
+  justify-content:center;
+  gap:9px;
+  flex-wrap:wrap;
+}
+.trace-evaluate-button{
+  min-width:180px;
+}
+.trace-retry-button{
+  align-self:center;
+  min-height:39px;
+  padding:0 14px;
+  border:0;
+  border-radius:13px;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:#8a611b;
+  background:linear-gradient(145deg,#fff2c9,#fff8e8);
+  font-size:10px;
+  font-weight:900;
+}
+.trace-next-button{
+  margin-top:3px;
+}
+@media(max-width:640px){
+  .trace-topline{align-items:flex-start}
+  .trace-pass-note{font-size:8px}
+  .trace-help-banner{grid-template-columns:auto 1fr}
+  .trace-help-banner button{grid-column:1/-1;justify-content:center}
+  .trace-stage{border-radius:22px}
+  .trace-guide-hand{width:40px;height:40px}
+  .trace-score-card{grid-template-columns:1fr}
+  .trace-score-breakdown{justify-content:stretch}
+  .trace-score-breakdown span{flex:1}
+}
+@media(prefers-reduced-motion:reduce){
+  .trace-guide-hand{animation:none!important}
+}
