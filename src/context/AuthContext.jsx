@@ -1,24 +1,14 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
-  getRedirectResult,
   onAuthStateChanged,
   signInWithPopup,
-  signInWithRedirect,
   signOut,
 } from 'firebase/auth'
-import {
-  auth,
-  authPersistenceReady,
-  firebaseReady,
-  googleProvider,
-  productionAuthDomain,
-} from '../firebase.js'
+import { auth, authPersistenceReady, firebaseReady, googleProvider } from '../firebase.js'
 import {
   ensureUserProfile,
   getDemoProfile,
-  migrateLegacyDemoProgress,
   subscribeProfile,
-  syncPendingProgress,
 } from '../services/appService.js'
 
 const AuthContext = createContext(null)
@@ -34,16 +24,6 @@ const fallbackProfileFromAuth = (authUser) => ({
   groupIds: [],
 })
 
-const isMobileBrowser = () => {
-  if (typeof window === 'undefined') return false
-  return window.matchMedia('(max-width: 820px)').matches ||
-    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
-}
-
-const isProductionAuthOrigin = () =>
-  typeof window !== 'undefined' &&
-  window.location.hostname === productionAuthDomain
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
@@ -56,60 +36,12 @@ export function AuthProvider({ children }) {
       return undefined
     }
 
+    let stopProfile = null
     let cancelled = false
     let stopAuth = null
-    let stopProfile = null
-
-    const hydrateUser = async (authUser) => {
-      setUser(authUser)
-      setAuthError('')
-      const fallback = fallbackProfileFromAuth(authUser)
-      setProfile((current) => current?.id === authUser.uid ? current : fallback)
-
-      try {
-        await ensureUserProfile(authUser)
-        await migrateLegacyDemoProgress(authUser.uid).catch(() => {})
-        await syncPendingProgress(authUser.uid).catch(() => {})
-
-        if (cancelled) return
-
-        stopProfile?.()
-        stopProfile = subscribeProfile(
-          authUser.uid,
-          (nextProfile) => {
-            setProfile(nextProfile)
-            syncPendingProgress(authUser.uid, nextProfile?.groupIds || []).catch(() => {})
-          },
-          (error) => {
-            console.error('Profile subscription failed', error)
-            setAuthError('La sesión está abierta, pero Firebase no permitió cargar el perfil.')
-          },
-        )
-      } catch (error) {
-        console.error('Firebase profile initialization failed', error)
-        setAuthError('La sesión está abierta, pero Firebase no permitió sincronizar el perfil.')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
 
     const start = async () => {
       await authPersistenceReady
-
-      try {
-        const redirectResult = await getRedirectResult(auth)
-        if (redirectResult?.user && !cancelled) {
-          await hydrateUser(redirectResult.user)
-        }
-      } catch (error) {
-        console.error('Google redirect result failed', error)
-        const code = error?.code || ''
-        if (code === 'auth/unauthorized-domain') {
-          setAuthError('El dominio de la web aún no está autorizado en Firebase Authentication.')
-        } else {
-          setAuthError('Google devolvió la sesión, pero Firebase no pudo recuperarla en este navegador.')
-        }
-      }
 
       if (cancelled) return
 
@@ -124,7 +56,33 @@ export function AuthProvider({ children }) {
           return
         }
 
-        await hydrateUser(authUser)
+        // Authentication succeeded. The UI becomes signed in immediately,
+        // even if the profile request takes a moment.
+        setUser(authUser)
+        setProfile((current) =>
+          current?.id === authUser.uid ? current : fallbackProfileFromAuth(authUser)
+        )
+        setAuthError('')
+
+        try {
+          await ensureUserProfile(authUser)
+
+          if (cancelled) return
+
+          stopProfile = subscribeProfile(
+            authUser.uid,
+            (nextProfile) => setProfile(nextProfile),
+            (error) => {
+              console.error('Profile subscription failed', error)
+              setAuthError('Iniciaste sesión, pero Firestore rechazó la lectura del perfil.')
+            },
+          )
+        } catch (error) {
+          console.error('Profile initialization failed', error)
+          setAuthError('Iniciaste sesión, pero Firestore rechazó la sincronización del perfil.')
+        } finally {
+          if (!cancelled) setLoading(false)
+        }
       })
     }
 
@@ -149,45 +107,27 @@ export function AuthProvider({ children }) {
 
     await authPersistenceReady
 
-    // OAuth on mobile must enter through the stable production origin because
-    // that origin proxies Firebase's /__/auth helpers and is the registered
-    // redirect domain.
-    if (isMobileBrowser() && !isProductionAuthOrigin()) {
-      const destination = new URL(window.location.href)
-      destination.hostname = productionAuthDomain
-      destination.protocol = 'https:'
-      destination.port = ''
-      window.location.assign(destination.toString())
-      return
-    }
-
     try {
-      if (isMobileBrowser()) {
-        sessionStorage.setItem('pequenos-auth-redirect-started', '1')
-        await signInWithRedirect(auth, googleProvider)
-        return
-      }
-
+      // Same Firebase login flow on desktop and mobile.
       const result = await signInWithPopup(auth, googleProvider)
+
       if (result?.user) {
         setUser(result.user)
-        setProfile((current) => current || fallbackProfileFromAuth(result.user))
+        setProfile(fallbackProfileFromAuth(result.user))
       }
     } catch (error) {
-      console.error('Google login failed', error)
       const code = error?.code || ''
+      console.error('Google login failed', error)
 
       if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return
 
-      if (code === 'auth/unauthorized-domain') {
-        setAuthError('Este dominio todavía no está autorizado en Firebase Authentication.')
-      } else if (code === 'auth/web-storage-unsupported') {
-        setAuthError('Este navegador está bloqueando el almacenamiento necesario para iniciar sesión.')
+      if (code === 'auth/popup-blocked') {
+        setAuthError('El navegador bloqueó la ventana de Google. Permite ventanas emergentes para esta página e inténtalo otra vez.')
+      } else if (code === 'auth/unauthorized-domain') {
+        setAuthError('El dominio actual no está autorizado en Firebase Authentication.')
       } else {
         setAuthError('No pudimos completar el inicio de sesión con Google. Intenta nuevamente.')
       }
-
-      throw error
     }
   }
 

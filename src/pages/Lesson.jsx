@@ -28,21 +28,15 @@ export default function Lesson() {
     setSaveState('saving')
     try {
       const result = await recordAttempt({ uid: profile.id, lessonId: lesson.id, score, passed, groupIds })
-      if (result?.synced) {
-        setSaveState('synced')
-        setSavedMessage(language === 'es' ? 'Progreso sincronizado' : 'Progress synced')
-      } else {
-        setSaveState('pending')
-        setSavedMessage(language === 'es'
-          ? 'Resultado guardado en este dispositivo. Quedó pendiente de sincronizar con Firebase.'
-          : 'Result saved on this device and is waiting to sync with Firebase.')
-      }
+      if (!result?.saved) throw new Error('Firestore no confirmó el guardado.')
+      setSaveState('synced')
+      setSavedMessage(language === 'es' ? 'Progreso guardado en Firebase' : 'Progress saved to Firebase')
     } catch (error) {
       console.error('Progress save failed', error)
-      setSaveState('pending')
+      setSaveState('error')
       setSavedMessage(language === 'es'
-        ? 'Resultado conservado en este dispositivo. Firebase no permitió sincronizarlo todavía.'
-        : 'Result kept on this device. Firebase has not allowed it to sync yet.')
+        ? 'No se pudo guardar el progreso en Firebase. Revisa la conexión o las reglas e inténtalo nuevamente.'
+        : 'Progress could not be saved to Firebase. Check the connection or rules and try again.')
     }
   }
 

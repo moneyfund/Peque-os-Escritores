@@ -9,6 +9,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -236,65 +237,96 @@ export async function listUserProgress(uid) {
     const map = data.progress?.[uid] || {}
     return Object.entries(map).map(([lessonId, value]) => ({ lessonId, ...value }))
   }
+
   const snapshot = await getDocs(collection(db, 'users', uid, 'progress'))
   return snapshot.docs.map((item) => ({ lessonId: item.id, ...item.data() }))
 }
 
+export function subscribeUserProgress(uid, callback, onError) {
+  if (!uid) {
+    callback([])
+    return () => {}
+  }
+
+  if (!firebaseReady) {
+    listUserProgress(uid).then(callback)
+    return () => {}
+  }
+
+  return onSnapshot(
+    collection(db, 'users', uid, 'progress'),
+    (snapshot) => {
+      callback(snapshot.docs.map((item) => ({ lessonId: item.id, ...item.data() })))
+    },
+    (error) => {
+      console.error('Progress subscription failed', error)
+      onError?.(error)
+    },
+  )
+}
+
 export async function recordAttempt({ uid, lessonId, score, passed, groupIds = [] }) {
+  if (!uid || !lessonId) throw new Error('No se pudo identificar el usuario o la lección.')
+
+  const normalizedScore = Math.max(0, Math.min(100, Math.round(score)))
+
   if (!firebaseReady) {
     const data = readDemoData()
     data.progress[uid] ||= {}
     const previous = data.progress[uid][lessonId] || { attempts: 0, completed: false, bestScore: 0 }
+
     data.progress[uid][lessonId] = {
       attempts: previous.attempts + 1,
-      completed: previous.completed || passed,
-      lastScore: score,
-      bestScore: Math.max(previous.bestScore || 0, score),
+      completed: Boolean(previous.completed || passed),
+      lastScore: normalizedScore,
+      bestScore: Math.max(previous.bestScore || previous.lastScore || 0, normalizedScore),
       updatedAt: Date.now(),
     }
-    for (const groupId of groupIds) {
-      data.groups[groupId] ||= { memberProgress: {} }
-      data.groups[groupId].memberProgress ||= {}
-      data.groups[groupId].memberProgress[uid] ||= {}
-      const prior = data.groups[groupId].memberProgress[uid][lessonId] || { attempts: 0, completed: false, bestScore: 0 }
-      data.groups[groupId].memberProgress[uid][lessonId] = {
-        attempts: prior.attempts + 1,
-        completed: prior.completed || passed,
-        lastScore: score,
-        bestScore: Math.max(prior.bestScore || 0, score),
-        updatedAt: Date.now(),
-      }
-    }
+
     writeDemoData(data)
-    return
+    return { saved: true, progress: data.progress[uid][lessonId] }
   }
 
-  const userProgressRef = doc(db, 'users', uid, 'progress', lessonId)
-  const userSnapshot = await getDoc(userProgressRef)
-  const previous = userSnapshot.exists() ? userSnapshot.data() : {}
-  const next = {
-    attempts: (previous.attempts || 0) + 1,
-    lastScore: score,
-    bestScore: Math.max(previous.bestScore || previous.lastScore || 0, score),
-    completed: Boolean(previous.completed || passed),
-    updatedAt: serverTimestamp(),
-  }
-  await setDoc(userProgressRef, next, { merge: true })
+  const progressRef = doc(db, 'users', uid, 'progress', lessonId)
 
-  // El progreso personal es la fuente principal. La sincronización a grupos
-  // es secundaria y no debe hacer que el intento se pierda si un grupo cambió.
-  await Promise.allSettled(groupIds.map(async (groupId) => {
-    const groupProgressRef = doc(db, 'groups', groupId, 'memberProgress', uid, 'lessons', lessonId)
-    const groupSnapshot = await getDoc(groupProgressRef)
-    const groupPrevious = groupSnapshot.exists() ? groupSnapshot.data() : {}
-    await setDoc(groupProgressRef, {
-      attempts: (groupPrevious.attempts || 0) + 1,
-      lastScore: score,
-      bestScore: Math.max(groupPrevious.bestScore || groupPrevious.lastScore || 0, score),
-      completed: Boolean(groupPrevious.completed || passed),
+  const personalProgress = await runTransaction(db, async (transaction) => {
+    const snapshot = await transaction.get(progressRef)
+    const previous = snapshot.exists() ? snapshot.data() : {}
+
+    const next = {
+      attempts: (previous.attempts || 0) + 1,
+      lastScore: normalizedScore,
+      bestScore: Math.max(previous.bestScore || previous.lastScore || 0, normalizedScore),
+      completed: Boolean(previous.completed || passed),
       updatedAt: serverTimestamp(),
-    }, { merge: true })
-  }))
+    }
+
+    transaction.set(progressRef, next, { merge: true })
+    return next
+  })
+
+  // Group progress is secondary. A group permission problem must never undo
+  // the user's personal Firestore progress.
+  await Promise.allSettled(
+    [...new Set(groupIds)].map(async (groupId) => {
+      const groupProgressRef = doc(db, 'groups', groupId, 'memberProgress', uid, 'lessons', lessonId)
+
+      await runTransaction(db, async (transaction) => {
+        const snapshot = await transaction.get(groupProgressRef)
+        const previous = snapshot.exists() ? snapshot.data() : {}
+
+        transaction.set(groupProgressRef, {
+          attempts: (previous.attempts || 0) + 1,
+          lastScore: normalizedScore,
+          bestScore: Math.max(previous.bestScore || previous.lastScore || 0, normalizedScore),
+          completed: Boolean(previous.completed || passed),
+          updatedAt: serverTimestamp(),
+        }, { merge: true })
+      })
+    }),
+  )
+
+  return { saved: true, progress: personalProgress }
 }
 
 export async function createGroup(uid, profile, name) {

@@ -5,25 +5,13 @@ import {
   GoogleAuthProvider,
   setPersistence,
 } from 'firebase/auth'
-import {
-  initializeFirestore,
-  persistentLocalCache,
-  persistentMultipleTabManager,
-} from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 import { getAnalytics, isSupported as analyticsSupported } from 'firebase/analytics'
 
-export const productionAuthDomain =
-  import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ||
-  'pequenos-escritores-moneyfunds-projects.vercel.app'
-
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyC1aqcls9eZu76vIcz_QxzXDSLobF71u8w',
-  // IMPORTANT:
-  // The production Vercel domain is intentionally used here instead of
-  // pequenos-escritores.firebaseapp.com. Vercel proxies /__/auth/* back to
-  // Firebase Hosting so mobile browsers keep the OAuth helper same-origin.
-  authDomain: productionAuthDomain,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'pequenos-escritores.firebaseapp.com',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'pequenos-escritores',
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'pequenos-escritores.firebasestorage.app',
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '605491809632',
@@ -31,7 +19,12 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-PW3BF29JLX',
 }
 
-export const firebaseReady = Boolean(firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId)
+export const firebaseReady = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  firebaseConfig.appId
+)
 
 let app = null
 let auth = null
@@ -44,17 +37,18 @@ let authPersistenceReady = Promise.resolve()
 if (firebaseReady) {
   app = initializeApp(firebaseConfig)
   auth = getAuth(app)
+
+  // Only the Firebase Auth session is persisted so the user stays signed in
+  // after refreshing. App data itself is stored in Firestore, not localStorage.
   authPersistenceReady = setPersistence(auth, browserLocalPersistence).catch((error) => {
     console.warn('Firebase auth persistence could not be initialized.', error)
   })
 
-  db = initializeFirestore(app, {
-    localCache: persistentLocalCache({
-      tabManager: persistentMultipleTabManager(),
-    }),
-  })
-
+  // No persistent Firestore browser cache. Progress, groups and profile data
+  // are read from and written to Firestore as the source of truth.
+  db = getFirestore(app)
   storage = getStorage(app)
+
   googleProvider = new GoogleAuthProvider()
   googleProvider.setCustomParameters({ prompt: 'select_account' })
 

@@ -1996,3 +1996,9 @@ body{
   font-weight:800;
   line-height:1.45;
 }
+
+.save-toast.save-error{
+  background:linear-gradient(145deg,#ffe2e9,#fff0f3)!important;
+  color:#9b4054!important;
+  border:1px solid rgba(197,73,102,.18);
+}

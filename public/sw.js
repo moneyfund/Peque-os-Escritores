@@ -1,4 +1,4 @@
-const CACHE = 'pequenos-escritores-v8-same-origin-auth'
+const CACHE = 'pequenos-escritores-v9-clean-auth'
 const CORE = ['/', '/icon.svg', '/manifest.webmanifest']
 
 self.addEventListener('install', (event) => {
@@ -20,10 +20,6 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url)
   if (url.origin !== self.location.origin) return
-
-  // Never intercept Firebase OAuth helpers. They are reverse-proxied by Vercel
-  // and must reach Firebase unchanged, especially on Safari/mobile browsers.
-  if (url.pathname.startsWith('/__/auth/') || url.pathname.startsWith('/__/firebase/')) return
 
   event.respondWith(
     fetch(event.request)
