@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, Eraser, HandPointer, RotateCcw, Sparkles, Target } from 'lucide-react'
+import { Check, Eraser, Pointer, RotateCcw, Sparkles, Target } from 'lucide-react'
 import { motion } from 'motion/react'
 import { localized } from '../data/lessons.js'
 
@@ -328,7 +328,7 @@ function TraceCanvas({ target, language, onEvaluated }) {
   return (
     <div className="trace-practice">
       <div className="trace-help-banner">
-        <span><HandPointer size={19}/></span>
+        <span><Pointer size={19}/></span>
         <div>
           <strong>{language === 'es' ? 'Mira la manito' : 'Watch the hand'}</strong>
           <small>{language === 'es' ? 'Te enseña el recorrido antes de intentarlo.' : 'It shows you the path before you try.'}</small>
@@ -389,7 +389,7 @@ function TraceCanvas({ target, language, onEvaluated }) {
             transition={{ duration: .7, repeat: Infinity, ease: 'easeInOut' }}
             aria-hidden="true"
           >
-            <HandPointer size={28} strokeWidth={2.4}/>
+            <Pointer size={28} strokeWidth={2.4}/>
           </motion.span>
         )}
       </div>
