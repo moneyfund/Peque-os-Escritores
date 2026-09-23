@@ -141,13 +141,13 @@ const geometryTraceTargets = [
 
 export const lessons = [
   {
-    id: 'trace-vowels', category: 'vowels', icon: '✏️', difficulty: 1,
+    id: 'trace-vowels', category: 'vowels', icon: '✏️', difficulty: 1, level: 1,
     title: { es: 'Traza las vocales', en: 'Trace the vowels' },
     description: { es: 'Sigue la forma de A, E, I, O y U con tu dedo o mouse.', en: 'Follow A, E, I, O and U with your finger or mouse.' },
     type: 'trace', targets: vowelTraceTargets,
   },
   {
-    id: 'listen-vowels', category: 'vowels', icon: '👂', difficulty: 1,
+    id: 'listen-vowels', category: 'vowels', icon: '👂', difficulty: 1, level: 2,
     title: { es: '¿Qué vocal escuchas?', en: 'Which vowel do you hear?' },
     description: { es: 'Escucha una vocal y toca la respuesta correcta.', en: 'Listen to a vowel and tap the correct answer.' },
     type: 'listen', items: [
@@ -159,7 +159,7 @@ export const lessons = [
     ],
   },
   {
-    id: 'vowel-pictures', category: 'vowels', icon: '🍎', difficulty: 2,
+    id: 'vowel-pictures', category: 'vowels', icon: '🍎', difficulty: 2, level: 3,
     title: { es: 'Vocal y dibujo', en: 'Vowel and picture' },
     description: { es: 'Elige la vocal con la que empieza cada palabra.', en: 'Choose the vowel each word starts with.' },
     type: 'quiz', items: [
@@ -171,7 +171,7 @@ export const lessons = [
     ],
   },
   {
-    id: 'count-objects', category: 'numbers', icon: '🍓', difficulty: 1,
+    id: 'count-objects', category: 'numbers', icon: '🍓', difficulty: 1, level: 1,
     title: { es: 'Cuenta los objetos', en: 'Count the objects' },
     description: { es: 'Cuenta uno por uno y elige el número correcto.', en: 'Count one by one and choose the right number.' },
     type: 'count', items: [
@@ -182,19 +182,19 @@ export const lessons = [
     ],
   },
   {
-    id: 'number-order', category: 'numbers', icon: '🚂', difficulty: 1,
+    id: 'number-order', category: 'numbers', icon: '🚂', difficulty: 1, level: 2,
     title: { es: 'Ponlos en orden', en: 'Put them in order' },
     description: { es: 'Toca los números del menor al mayor.', en: 'Tap the numbers from smallest to biggest.' },
     type: 'sequence', target: [1,2,3,4,5,6,7,8],
   },
   {
-    id: 'trace-numbers', category: 'numbers', icon: '🖍️', difficulty: 2,
+    id: 'trace-numbers', category: 'numbers', icon: '🖍️', difficulty: 2, level: 3,
     title: { es: 'Traza los números', en: 'Trace the numbers' },
     description: { es: 'Practica los números del 1 al 5.', en: 'Practice numbers 1 through 5.' },
     type: 'trace', targets: numberTraceTargets,
   },
   {
-    id: 'find-color', category: 'colors', icon: '🌈', difficulty: 1,
+    id: 'find-color', category: 'colors', icon: '🌈', difficulty: 1, level: 1,
     title: { es: 'Encuentra el color', en: 'Find the color' },
     description: { es: 'Mira el nombre y elige el color correcto.', en: 'Read the name and choose the right color.' },
     type: 'color', items: [
@@ -206,7 +206,7 @@ export const lessons = [
     ],
   },
   {
-    id: 'listen-colors', category: 'colors', icon: '🔊', difficulty: 2,
+    id: 'listen-colors', category: 'colors', icon: '🔊', difficulty: 2, level: 2,
     title: { es: 'Escucha el color', en: 'Listen to the color' },
     description: { es: 'Escucha y toca el círculo correcto.', en: 'Listen and tap the correct circle.' },
     type: 'listen-color', items: [
@@ -216,19 +216,19 @@ export const lessons = [
     ],
   },
   {
-    id: 'trace-lines-basic', category: 'shapes', icon: '✍️', difficulty: 1,
+    id: 'trace-lines-basic', category: 'shapes', icon: '✍️', difficulty: 1, level: 1,
     title: { es: 'Traza líneas y caminos', en: 'Trace lines and paths' },
     description: { es: 'Practica líneas rectas, diagonales, curvas y ondas siguiendo la manito.', en: 'Practice straight, diagonal, curved and wavy paths by following the hand.' },
     type: 'trace', targets: basicLineTraceTargets,
   },
   {
-    id: 'trace-geometric-shapes', category: 'shapes', icon: '📐', difficulty: 2,
+    id: 'trace-geometric-shapes', category: 'shapes', icon: '📐', difficulty: 2, level: 3,
     title: { es: 'Traza figuras geométricas', en: 'Trace geometric shapes' },
     description: { es: 'Sigue la guía para dibujar círculo, triángulo, cuadrado, rectángulo y rombo.', en: 'Follow the guide to draw a circle, triangle, square, rectangle and diamond.' },
     type: 'trace', targets: geometryTraceTargets,
   },
   {
-    id: 'identify-shapes', category: 'shapes', icon: '🟦', difficulty: 1,
+    id: 'identify-shapes', category: 'shapes', icon: '🟦', difficulty: 1, level: 2,
     title: { es: '¿Qué forma es?', en: 'What shape is it?' },
     description: { es: 'Observa la figura y elige su nombre.', en: 'Look at the shape and choose its name.' },
     type: 'shape', items: [
@@ -238,7 +238,7 @@ export const lessons = [
     ],
   },
   {
-    id: 'patterns', category: 'shapes', icon: '🧩', difficulty: 2,
+    id: 'patterns', category: 'shapes', icon: '🧩', difficulty: 2, level: 4,
     title: { es: 'Completa el patrón', en: 'Complete the pattern' },
     description: { es: 'Descubre qué elemento sigue en la secuencia.', en: 'Discover what comes next in the sequence.' },
     type: 'pattern', items: [
@@ -248,7 +248,7 @@ export const lessons = [
     ],
   },
   {
-    id: 'animal-sounds', category: 'words', icon: '🐶', difficulty: 1,
+    id: 'animal-sounds', category: 'words', icon: '🐶', difficulty: 1, level: 1,
     title: { es: 'Escucha y encuentra', en: 'Listen and find' },
     description: { es: 'Escucha el nombre del animal y toca su dibujo.', en: 'Listen to the animal name and tap its picture.' },
     type: 'listen-emoji', items: [
@@ -259,7 +259,7 @@ export const lessons = [
     ],
   },
   {
-    id: 'first-words', category: 'words', icon: '🗣️', difficulty: 2,
+    id: 'first-words', category: 'words', icon: '🗣️', difficulty: 2, level: 2,
     title: { es: 'Palabras del día', en: 'Words of the day' },
     description: { es: 'Mira el dibujo, escucha la palabra y encuentra la opción correcta.', en: 'Look, listen and choose the matching word.' },
     type: 'word', items: [
@@ -268,7 +268,141 @@ export const lessons = [
       { emoji: '🌸', speak: { es:'flor', en:'flower' }, answer: { es:'Flor', en:'Flower' }, options: { es:['Flor','Pan','Tren'], en:['Flower','Bread','Train'] } },
     ],
   },
+
+  {
+    id: 'vowel-hunt', category: 'vowels', icon: '🔎', difficulty: 2, level: 4,
+    title: { es: 'Caza la vocal', en: 'Vowel hunt' },
+    description: { es: 'Descubre con qué vocal empieza cada palabra.', en: 'Find the vowel each word begins with.' },
+    type: 'quiz', items: [
+      { prompt: { es: '¿Con qué vocal empieza Avión?', en: 'Which vowel starts Airplane?' }, emoji: '✈️', options: ['A','E','O'], answer: 'A' },
+      { prompt: { es: '¿Con qué vocal empieza Estrella?', en: 'Which vowel starts Elephant?' }, emoji: '⭐', options: ['I','E','U'], answer: 'E' },
+      { prompt: { es: '¿Con qué vocal empieza Ojo?', en: 'Which vowel starts Octopus?' }, emoji: '👁️', options: ['A','O','U'], answer: 'O' },
+      { prompt: { es: '¿Con qué vocal empieza Uvas?', en: 'Which vowel starts Umbrella?' }, emoji: '🍇', options: ['E','I','U'], answer: 'U' },
+    ],
+  },
+  {
+    id: 'vowel-master', category: 'vowels', icon: '🏆', difficulty: 3, level: 5,
+    title: { es: 'Maestro de vocales', en: 'Vowel master' },
+    description: { es: 'Completa palabras sencillas eligiendo la vocal que falta.', en: 'Complete simple words by choosing the missing vowel.' },
+    type: 'quiz', items: [
+      { prompt: { es: 'C_SA', en: 'C_T' }, options: ['A','E','I'], answer: 'A' },
+      { prompt: { es: 'M_SA', en: 'B_D' }, options: ['A','E','O'], answer: 'E' },
+      { prompt: { es: 'S_L', en: 'P_G' }, options: ['A','I','O'], answer: 'O' },
+      { prompt: { es: 'L_NA', en: 'S_N' }, options: ['O','U','E'], answer: 'U' },
+    ],
+  },
+  {
+    id: 'compare-numbers', category: 'numbers', icon: '⚖️', difficulty: 2, level: 4,
+    title: { es: 'Compara números', en: 'Compare numbers' },
+    description: { es: 'Elige el número mayor o menor según la pregunta.', en: 'Choose the greater or smaller number.' },
+    type: 'quiz', items: [
+      { prompt: { es: '¿Cuál número es mayor?', en: 'Which number is greater?' }, options: [3,7,5], answer: 7 },
+      { prompt: { es: '¿Cuál número es menor?', en: 'Which number is smaller?' }, options: [8,2,6], answer: 2 },
+      { prompt: { es: '¿Cuál número es mayor?', en: 'Which number is greater?' }, options: [4,9,1], answer: 9 },
+      { prompt: { es: '¿Cuál número es menor?', en: 'Which number is smaller?' }, options: [5,3,7], answer: 3 },
+    ],
+  },
+  {
+    id: 'missing-number', category: 'numbers', icon: '🧠', difficulty: 3, level: 5,
+    title: { es: 'El número que falta', en: 'Missing number' },
+    description: { es: 'Completa pequeñas secuencias numéricas.', en: 'Complete short number sequences.' },
+    type: 'quiz', items: [
+      { prompt: { es: '1 · 2 · ? · 4', en: '1 · 2 · ? · 4' }, options: [3,5,6], answer: 3 },
+      { prompt: { es: '3 · 4 · ? · 6', en: '3 · 4 · ? · 6' }, options: [2,5,7], answer: 5 },
+      { prompt: { es: '6 · ? · 8 · 9', en: '6 · ? · 8 · 9' }, options: [5,7,10], answer: 7 },
+      { prompt: { es: '? · 9 · 10', en: '? · 9 · 10' }, options: [6,7,8], answer: 8 },
+    ],
+  },
+  {
+    id: 'color-objects', category: 'colors', icon: '🍓', difficulty: 2, level: 3,
+    title: { es: 'Colores de objetos', en: 'Object colors' },
+    description: { es: 'Observa el objeto y toca su color.', en: 'Look at the object and tap its color.' },
+    type: 'color', items: [
+      { prompt: { es: '¿De qué color es la fresa?', en: 'What color is the strawberry?' }, emoji: '🍓', answer: '#ef4444', options: ['#ef4444','#3b82f6','#facc15'] },
+      { prompt: { es: '¿De qué color es el sol?', en: 'What color is the sun?' }, emoji: '☀️', answer: '#facc15', options: ['#22c55e','#facc15','#a855f7'] },
+      { prompt: { es: '¿De qué color es esta hoja?', en: 'What color is this leaf?' }, emoji: '🍃', answer: '#22c55e', options: ['#22c55e','#ef4444','#3b82f6'] },
+    ],
+  },
+  {
+    id: 'listen-more-colors', category: 'colors', icon: '🎧', difficulty: 2, level: 4,
+    title: { es: 'Escucha más colores', en: 'Listen to more colors' },
+    description: { es: 'Reconoce morado, naranja y rosado por su sonido.', en: 'Recognize purple, orange and pink by sound.' },
+    type: 'listen-color', items: [
+      { speak: { es: 'morado', en: 'purple' }, answer: '#a855f7', options: ['#f97316','#a855f7','#ec4899'] },
+      { speak: { es: 'naranja', en: 'orange' }, answer: '#f97316', options: ['#f97316','#3b82f6','#22c55e'] },
+      { speak: { es: 'rosado', en: 'pink' }, answer: '#ec4899', options: ['#facc15','#ec4899','#a855f7'] },
+    ],
+  },
+  {
+    id: 'color-challenge', category: 'colors', icon: '🏅', difficulty: 3, level: 5,
+    title: { es: 'Reto arcoíris', en: 'Rainbow challenge' },
+    description: { es: 'Resuelve una mezcla de colores conocidos.', en: 'Solve a mix of familiar colors.' },
+    type: 'color', items: [
+      { prompt: { es: 'Toca el azul', en: 'Tap blue' }, answer: '#3b82f6', options: ['#ef4444','#3b82f6','#22c55e'] },
+      { prompt: { es: 'Toca el morado', en: 'Tap purple' }, answer: '#a855f7', options: ['#a855f7','#facc15','#f97316'] },
+      { prompt: { es: 'Toca el rosado', en: 'Tap pink' }, answer: '#ec4899', options: ['#22c55e','#ec4899','#3b82f6'] },
+      { prompt: { es: 'Toca el naranja', en: 'Tap orange' }, answer: '#f97316', options: ['#f97316','#a855f7','#ef4444'] },
+    ],
+  },
+  {
+    id: 'shapes-around-us', category: 'shapes', icon: '🏠', difficulty: 3, level: 5,
+    title: { es: 'Formas a tu alrededor', en: 'Shapes around you' },
+    description: { es: 'Relaciona objetos cotidianos con su forma geométrica.', en: 'Match everyday objects with their geometric shape.' },
+    type: 'quiz', items: [
+      { prompt: { es: '¿Qué forma tiene una pelota?', en: 'What shape is a ball?' }, emoji: '⚽', answer: { es:'Círculo', en:'Circle' }, options: { es:['Círculo','Cuadrado','Triángulo'], en:['Circle','Square','Triangle'] } },
+      { prompt: { es: '¿Qué forma se parece a una ventana?', en: 'What shape is like a window?' }, emoji: '🪟', answer: { es:'Cuadrado', en:'Square' }, options: { es:['Triángulo','Cuadrado','Círculo'], en:['Triangle','Square','Circle'] } },
+      { prompt: { es: '¿Qué forma tiene esta señal?', en: 'What shape is this sign?' }, emoji: '🔺', answer: { es:'Triángulo', en:'Triangle' }, options: { es:['Círculo','Triángulo','Cuadrado'], en:['Circle','Triangle','Square'] } },
+    ],
+  },
+  {
+    id: 'initial-sounds', category: 'words', icon: '🔤', difficulty: 2, level: 3,
+    title: { es: 'Sonido inicial', en: 'First sound' },
+    description: { es: 'Encuentra la primera letra de cada palabra.', en: 'Find the first letter of each word.' },
+    type: 'quiz', items: [
+      { prompt: { es: 'SOL empieza con…', en: 'SUN starts with…' }, emoji: '☀️', options: ['S','M','P'], answer: 'S' },
+      { prompt: { es: 'CASA empieza con…', en: 'HOUSE starts with…' }, emoji: '🏠', options: ['C','L','T'], answer: 'C' },
+      { prompt: { es: 'FLOR empieza con…', en: 'FLOWER starts with…' }, emoji: '🌸', options: ['R','F','N'], answer: 'F' },
+    ],
+  },
+  {
+    id: 'match-words', category: 'words', icon: '🧩', difficulty: 2, level: 4,
+    title: { es: 'Une dibujo y palabra', en: 'Match picture and word' },
+    description: { es: 'Mira el dibujo y elige la palabra correcta.', en: 'Look at the picture and choose the correct word.' },
+    type: 'quiz', items: [
+      { prompt: { es: '¿Qué ves?', en: 'What do you see?' }, emoji: '🐶', answer: { es:'Perro', en:'Dog' }, options: { es:['Gato','Perro','Pez'], en:['Cat','Dog','Fish'] } },
+      { prompt: { es: '¿Qué ves?', en: 'What do you see?' }, emoji: '🌙', answer: { es:'Luna', en:'Moon' }, options: { es:['Sol','Casa','Luna'], en:['Sun','House','Moon'] } },
+      { prompt: { es: '¿Qué ves?', en: 'What do you see?' }, emoji: '🚗', answer: { es:'Carro', en:'Car' }, options: { es:['Árbol','Carro','Pan'], en:['Tree','Car','Bread'] } },
+    ],
+  },
+  {
+    id: 'listen-words-advanced', category: 'words', icon: '🎧', difficulty: 3, level: 5,
+    title: { es: 'Oídos atentos', en: 'Listening ears' },
+    description: { es: 'Escucha palabras nuevas y encuentra su dibujo.', en: 'Listen to new words and find the matching picture.' },
+    type: 'listen-emoji', items: [
+      { speak: { es: 'mariposa', en: 'butterfly' }, answer: '🦋', options: ['🐝','🦋','🐞'] },
+      { speak: { es: 'árbol', en: 'tree' }, answer: '🌳', options: ['🌵','🌳','🌷'] },
+      { speak: { es: 'carro', en: 'car' }, answer: '🚗', options: ['🚲','🚌','🚗'] },
+      { speak: { es: 'libro', en: 'book' }, answer: '📘', options: ['✏️','📘','🎒'] },
+    ],
+  },
 ]
 
 export const getLesson = (id) => lessons.find((lesson) => lesson.id === id)
+export const getCategoryLessons = (categoryId) => lessons
+  .filter((lesson) => lesson.category === categoryId)
+  .sort((a, b) => (a.level || 1) - (b.level || 1))
+
+export const getLessonPrerequisite = (lesson) => {
+  const level = lesson?.level || 1
+  if (level <= 2) return null
+  return lessons.find((item) => item.category === lesson.category && (item.level || 1) === level - 2) || null
+}
+
+export const isLessonUnlocked = (lesson, progressMap = {}) => {
+  if (!lesson) return false
+  if ((lesson.level || 1) <= 2) return true
+  const prerequisite = getLessonPrerequisite(lesson)
+  return prerequisite ? Boolean(progressMap[prerequisite.id]?.completed) : false
+}
+
 export const localized = (value, lang = 'es') => value?.[lang] ?? value?.es ?? value
