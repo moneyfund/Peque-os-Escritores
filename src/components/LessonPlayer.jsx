@@ -120,6 +120,10 @@ export default function LessonPlayer({ lesson, language, onComplete }) {
   let prompt = item.prompt ? localized(item.prompt, language) : ''
 
   if (lesson.type === 'count') answer = item.count
+  if (lesson.type === 'quiz' && typeof item.answer === 'object') {
+    answer = localized(item.answer, language)
+    options = item.options?.[language] || item.options?.es || []
+  }
   if (lesson.type === 'word') {
     answer = localized(item.answer, language)
     options = item.options[language] || item.options.es
