@@ -4,6 +4,7 @@ import Layout from './components/Layout.jsx'
 import { useAuth } from './context/AuthContext.jsx'
 import Home from './pages/Home.jsx'
 import Learn from './pages/Learn.jsx'
+import Syllables from './pages/Syllables.jsx'
 import Lesson from './pages/Lesson.jsx'
 import Progress from './pages/Progress.jsx'
 import Profile from './pages/Profile.jsx'
@@ -21,6 +22,7 @@ export default function App() {
   return <Layout><Routes>
     <Route path="/" element={<Home/>}/>
     <Route path="/aprender" element={<Learn/>}/>
+    <Route path="/silabas" element={<Syllables/>}/>
     <Route path="/lecciones/:lessonId" element={<Lesson/>}/>
     <Route path="/avances" element={<Protected><Progress/></Protected>}/>
     <Route path="/perfil" element={<Protected><Profile/></Protected>}/>
