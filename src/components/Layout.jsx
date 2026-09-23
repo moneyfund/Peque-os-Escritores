@@ -107,6 +107,15 @@ export default function Layout({ children }) {
 
       <main>{children}</main>
 
+      {import.meta.env.VITE_HIDE_XARCON_CREDIT !== 'true' && (
+        <footer className="xarcon-tech-footer">
+          <div className="container xarcon-tech-footer-inner">
+            <span>{language === 'es' ? 'Tecnología web por' : 'Web technology by'}</span>
+            <strong>XARCON <b>Creative</b></strong>
+          </div>
+        </footer>
+      )}
+
       {user && (
         <nav className="v3-mobile-dock" aria-label="Navegación móvil">
           <NavLink end to="/"><Home/><span>{language === 'es' ? 'Inicio' : 'Home'}</span></NavLink>
