@@ -2852,3 +2852,47 @@ body{
 @media(prefers-reduced-motion:reduce){
   .v12-ambient,.syllables-bg-orb,.kid-music-wave i{animation:none!important}
 }
+
+
+/* ==========================================================
+   XARCON TECHNOLOGY CREDIT
+   ========================================================== */
+.xarcon-tech-footer{
+  position:relative;
+  z-index:3;
+  padding:22px 0 28px;
+  background:linear-gradient(180deg,rgba(246,250,255,.45),rgba(238,244,253,.78));
+  border-top:1px solid rgba(43,73,123,.08);
+  backdrop-filter:blur(10px);
+}
+.xarcon-tech-footer-inner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  color:#8492a8;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.015em;
+}
+.xarcon-tech-footer-inner strong{
+  color:#263f69;
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:.045em;
+}
+.xarcon-tech-footer-inner strong b{
+  color:#6a58d8;
+  font-weight:950;
+}
+@media(max-width:760px){
+  .xarcon-tech-footer{
+    padding:18px 0 86px;
+  }
+  .xarcon-tech-footer-inner{
+    font-size:7px;
+  }
+  .xarcon-tech-footer-inner strong{
+    font-size:8px;
+  }
+}
