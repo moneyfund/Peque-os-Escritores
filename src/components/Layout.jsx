@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Bell, BookOpen, ChevronDown, Home, Languages, LogOut, Menu, Settings, UserRound, UsersRound, X } from 'lucide-react'
+import { Bell, BookOpen, ChevronDown, Home, Languages, LogOut, Menu, Settings, Type, UserRound, UsersRound, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import Avatar from './Avatar.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -42,6 +42,7 @@ export default function Layout({ children }) {
   const primaryNav = [
     { to: '/', label: language === 'es' ? 'Inicio' : 'Home', icon: Home, end: true },
     { to: '/aprender', label: language === 'es' ? 'Aprender' : 'Learn', icon: BookOpen },
+    { to: '/silabas', label: language === 'es' ? 'Sílabas' : 'Syllables', icon: Type },
     ...(user ? [{ to: '/grupos', label: language === 'es' ? 'Grupos' : 'Groups', icon: UsersRound }] : []),
   ]
 
@@ -110,6 +111,7 @@ export default function Layout({ children }) {
         <nav className="v3-mobile-dock" aria-label="Navegación móvil">
           <NavLink end to="/"><Home/><span>{language === 'es' ? 'Inicio' : 'Home'}</span></NavLink>
           <NavLink to="/aprender"><BookOpen/><span>{language === 'es' ? 'Aprender' : 'Learn'}</span></NavLink>
+          <NavLink to="/silabas"><Type/><span>{language === 'es' ? 'Sílabas' : 'Syllables'}</span></NavLink>
           <NavLink to="/grupos"><UsersRound/><span>{language === 'es' ? 'Grupos' : 'Groups'}</span></NavLink>
           <NavLink to="/invitaciones" className="dock-invites"><Bell/><span>{language === 'es' ? 'Avisos' : 'Invites'}</span>{inviteCount > 0 && <b>{inviteCount}</b>}</NavLink>
         </nav>
