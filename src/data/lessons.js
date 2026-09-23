@@ -1,5 +1,6 @@
 export const categories = [
-  { id: 'vowels', icon: '🔤', title: { es: 'Vocales y letras', en: 'Vowels & letters' }, subtitle: { es: 'Traza, escucha y reconoce', en: 'Trace, listen and recognize' }, color: 'violet' },
+  { id: 'vowels', icon: '🔤', title: { es: 'Vocales', en: 'Vowels' }, subtitle: { es: 'Traza, escucha y reconoce A E I O U', en: 'Trace, listen and recognize A E I O U' }, color: 'violet' },
+  { id: 'alphabet', icon: '🔠', title: { es: 'ABCDario', en: 'Alphabet' }, subtitle: { es: 'Reconoce, escucha y ordena las letras', en: 'Recognize, listen and order letters' }, color: 'coral' },
   { id: 'numbers', icon: '🔢', title: { es: 'Números', en: 'Numbers' }, subtitle: { es: 'Cuenta, ordena y compara', en: 'Count, order and compare' }, color: 'blue' },
   { id: 'colors', icon: '🎨', title: { es: 'Colores', en: 'Colors' }, subtitle: { es: 'Mira, escucha y elige', en: 'Look, listen and choose' }, color: 'pink' },
   { id: 'shapes', icon: '🔺', title: { es: 'Formas y patrones', en: 'Shapes & patterns' }, subtitle: { es: 'Encuentra formas y secuencias', en: 'Find shapes and sequences' }, color: 'orange' },
@@ -38,6 +39,15 @@ const vowelTraceTargets = [
     paths: ['M88 43 L88 132 C88 192 232 192 232 132 L232 43'],
     tolerance: 18,
   },
+]
+
+
+const alphabetTraceTargets = [
+  { label:'A', name:{ es:'la letra A', en:'letter A' }, paths:['M72 180 L160 40 L248 180','M110 122 L210 122'], tolerance:18 },
+  { label:'B', name:{ es:'la letra B', en:'letter B' }, paths:['M100 42 L100 180','M100 43 C210 35 220 105 100 110','M100 110 C225 105 220 185 100 180'], tolerance:19 },
+  { label:'C', name:{ es:'la letra C', en:'letter C' }, paths:['M238 62 C205 30 105 32 82 104 C61 171 155 207 235 164'], tolerance:19 },
+  { label:'D', name:{ es:'la letra D', en:'letter D' }, paths:['M94 42 L94 180','M94 42 C220 35 244 177 94 180'], tolerance:19 },
+  { label:'E', name:{ es:'la letra E', en:'letter E' }, paths:['M225 45 L95 45 L95 178 L225 178','M95 110 L200 110'], tolerance:18 },
 ]
 
 const numberTraceTargets = [
@@ -168,6 +178,60 @@ export const lessons = [
       { prompt: { es: 'Isla', en: 'Igloo' }, emoji: '🏝️', options: ['U','I','E'], answer: 'I' },
       { prompt: { es: 'Oso', en: 'Octopus' }, emoji: '🐻', options: ['O','A','U'], answer: 'O' },
       { prompt: { es: 'Uvas', en: 'Umbrella' }, emoji: '🍇', options: ['E','U','I'], answer: 'U' },
+    ],
+  },
+  {
+    id: 'alphabet-listen', category: 'alphabet', icon: '👂', difficulty: 1, level: 1,
+    title: { es: 'Escucha la letra', en: 'Listen to the letter' },
+    description: { es: 'Escucha el nombre de una letra y encuéntrala.', en: 'Listen to a letter name and find it.' },
+    type: 'listen', items: [
+      { speak:{ es:'B', en:'B' }, options:['B','D','P'], answer:'B' },
+      { speak:{ es:'M', en:'M' }, options:['N','M','S'], answer:'M' },
+      { speak:{ es:'R', en:'R' }, options:['L','R','T'], answer:'R' },
+      { speak:{ es:'Ñ', en:'N with tilde' }, options:['N','Ñ','M'], answer:'Ñ' },
+      { speak:{ es:'Z', en:'Z' }, options:['S','C','Z'], answer:'Z' },
+    ],
+  },
+  {
+    id: 'alphabet-recognize', category: 'alphabet', icon: '🔎', difficulty: 1, level: 2,
+    title: { es: 'Encuentra la letra', en: 'Find the letter' },
+    description: { es: 'Observa la letra indicada y elige la correcta.', en: 'Look at the target and choose the matching letter.' },
+    type: 'quiz', items: [
+      { prompt:{ es:'Busca la letra C', en:'Find letter C' }, options:['G','C','O'], answer:'C' },
+      { prompt:{ es:'Busca la letra F', en:'Find letter F' }, options:['F','E','P'], answer:'F' },
+      { prompt:{ es:'Busca la letra H', en:'Find letter H' }, options:['A','H','N'], answer:'H' },
+      { prompt:{ es:'Busca la letra Q', en:'Find letter Q' }, options:['O','Q','D'], answer:'Q' },
+      { prompt:{ es:'Busca la letra Y', en:'Find letter Y' }, options:['V','Y','X'], answer:'Y' },
+    ],
+  },
+  {
+    id: 'alphabet-trace', category: 'alphabet', icon: '✏️', difficulty: 2, level: 3,
+    title: { es: 'Traza A, B, C, D y E', en: 'Trace A, B, C, D and E' },
+    description: { es: 'Sigue la guía y practica el inicio del abecedario.', en: 'Follow the guide and practice the beginning of the alphabet.' },
+    type: 'trace', targets: alphabetTraceTargets,
+  },
+  {
+    id: 'alphabet-order', category: 'alphabet', icon: '🧩', difficulty: 2, level: 4,
+    title: { es: '¿Qué letra sigue?', en: 'Which letter comes next?' },
+    description: { es: 'Completa pequeñas secuencias del abecedario.', en: 'Complete short alphabet sequences.' },
+    type: 'quiz', items: [
+      { prompt:{ es:'A · B · ?', en:'A · B · ?' }, options:['C','D','E'], answer:'C' },
+      { prompt:{ es:'F · G · ?', en:'F · G · ?' }, options:['I','H','J'], answer:'H' },
+      { prompt:{ es:'M · N · ?', en:'M · N · ?' }, options:['Ñ','O','L'], answer:'Ñ' },
+      { prompt:{ es:'P · Q · ?', en:'P · Q · ?' }, options:['R','S','O'], answer:'R' },
+      { prompt:{ es:'X · Y · ?', en:'X · Y · ?' }, options:['W','Z','V'], answer:'Z' },
+    ],
+  },
+  {
+    id: 'alphabet-beginnings', category: 'alphabet', icon: '🦊', difficulty: 3, level: 5,
+    title: { es: 'Letra inicial', en: 'First letter' },
+    description: { es: 'Relaciona dibujos con la letra con la que empieza su nombre.', en: 'Match pictures with their first letter.' },
+    type: 'quiz', items: [
+      { prompt:{ es:'Árbol empieza con…', en:'Árbol starts with…' }, emoji:'🌳', options:['A','E','O'], answer:'A' },
+      { prompt:{ es:'Casa empieza con…', en:'Casa starts with…' }, emoji:'🏠', options:['G','C','S'], answer:'C' },
+      { prompt:{ es:'Luna empieza con…', en:'Luna starts with…' }, emoji:'🌙', options:['L','N','R'], answer:'L' },
+      { prompt:{ es:'Mar empieza con…', en:'Mar starts with…' }, emoji:'🌊', options:['P','M','B'], answer:'M' },
+      { prompt:{ es:'Sol empieza con…', en:'Sol starts with…' }, emoji:'☀️', options:['Z','C','S'], answer:'S' },
     ],
   },
   {
