@@ -10,8 +10,8 @@ function VowelsArt() {
     </defs>
     <g filter="url(#vs)" fontFamily="Arial Rounded MT Bold, system-ui, sans-serif" fontWeight="900">
       <text x="13" y="74" fontSize="54" fill="url(#va)" transform="rotate(-8 13 74)">A</text>
-      <text x="44" y="47" fontSize="52" fill="url(#vb)" transform="rotate(5 44 47)">B</text>
-      <text x="75" y="78" fontSize="50" fill="url(#vc)" transform="rotate(7 75 78)">C</text>
+      <text x="44" y="47" fontSize="52" fill="url(#vb)" transform="rotate(5 44 47)">E</text>
+      <text x="75" y="78" fontSize="50" fill="url(#vc)" transform="rotate(7 75 78)">I</text>
     </g>
     <circle cx="17" cy="18" r="3" fill="#fff" opacity=".8"/>
     <path d="M105 13l2.5 6.5L114 22l-6.5 2.5L105 31l-2.5-6.5L96 22l6.5-2.5z" fill="#fff" opacity=".82"/>
