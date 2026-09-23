@@ -21,6 +21,7 @@ import { motion } from 'motion/react'
 
 const iconMap = {
   vowels: Type,
+  alphabet: Type,
   numbers: Hash,
   colors: Palette,
   shapes: Shapes,
@@ -30,6 +31,11 @@ const iconMap = {
   'vowel-pictures': Image,
   'vowel-hunt': Image,
   'vowel-master': Type,
+  'alphabet-listen': Volume2,
+  'alphabet-recognize': Type,
+  'alphabet-trace': Pencil,
+  'alphabet-order': ListOrdered,
+  'alphabet-beginnings': Image,
   'count-objects': Calculator,
   'number-order': ListOrdered,
   'trace-numbers': Pencil,
