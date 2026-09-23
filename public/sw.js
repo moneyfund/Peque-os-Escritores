@@ -1,5 +1,6 @@
-const CACHE = 'pequenos-escritores-v10-smart-trace'
-const CORE = ['/', '/icon.svg', '/manifest.webmanifest']
+const CACHE = 'pequenos-escritores-v12-pages'
+const BASE = new URL('./', self.location.href).pathname
+const CORE = [BASE, `${BASE}icon.svg`, `${BASE}manifest.webmanifest`]
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE)).catch(() => {}))
@@ -28,6 +29,6 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, copy)).catch(() => {})
         return response
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match('/'))),
+      .catch(() => caches.match(event.request).then((cached) => cached || caches.match(BASE))),
   )
 })

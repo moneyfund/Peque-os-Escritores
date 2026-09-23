@@ -51,7 +51,7 @@ export default function Layout({ children }) {
       <header className="v3-topbar">
         <div className="container v3-topbar-inner">
           <Link to="/" className="v3-brand-link" aria-label="Pequeños Escritores">
-            <img src="/brand-logo.svg" alt="Pequeños Escritores" className="v3-brand-image" />
+            <img src={`${import.meta.env.BASE_URL}brand-logo.svg`} alt="Pequeños Escritores" className="v3-brand-image" />
           </Link>
 
           <nav className="v3-desktop-nav" aria-label="Principal">
@@ -123,7 +123,7 @@ export default function Layout({ children }) {
             <motion.button className="drawer-backdrop v3-drawer-backdrop" aria-label="Cerrar menú" onClick={() => setMenuOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
             <motion.aside className="drawer v3-drawer" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 320, damping: 32 }}>
               <div className="drawer-header">
-                <img src="/brand-logo.svg" alt="Pequeños Escritores" className="v3-drawer-logo" />
+                <img src={`${import.meta.env.BASE_URL}brand-logo.svg`} alt="Pequeños Escritores" className="v3-drawer-logo" />
                 <button className="icon-only" onClick={() => setMenuOpen(false)}><X/></button>
               </div>
 

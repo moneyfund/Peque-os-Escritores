@@ -84,7 +84,7 @@ export default function Home() {
               <motion.div className="v12-play-ring ring-one" animate={{ rotate:360 }} transition={{ duration:28, repeat:Infinity, ease:'linear' }}/>
               <motion.div className="v12-play-ring ring-two" animate={{ rotate:-360 }} transition={{ duration:38, repeat:Infinity, ease:'linear' }}/>
               <motion.div className="v12-play-core" {...dragProps} animate={{ y:[0,-12,0], rotate:[-2,2,-2] }} transition={floatTransition(0,4.6)}>
-                <img src="/favicon.svg" alt=""/>
+                <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt=""/>
                 <span>{language === 'es' ? '¡Juega conmigo!' : 'Play with me!'}</span>
               </motion.div>
               {[
@@ -141,7 +141,7 @@ export default function Home() {
 
           <div className="v12-user-playground" aria-label={language === 'es' ? 'Zona interactiva' : 'Interactive area'}>
             <motion.div className="v12-user-core" {...dragProps} animate={{ y:[0,-12,0], rotate:[-3,3,-3] }} transition={floatTransition(0,4.2)}>
-              <img src="/favicon.svg" alt=""/>
+              <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt=""/>
             </motion.div>
             {[
               ['A','node-one'],['#','node-two'],['MA','node-three'],['3','node-four'],['▲','node-five'],
