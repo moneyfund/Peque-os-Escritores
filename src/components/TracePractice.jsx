@@ -99,6 +99,21 @@ function getTraceLabel(target, language) {
   return target?.label || ''
 }
 
+function speakTraceTarget(target, language) {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+  const rawLabel = String(target?.label || '').trim()
+  const isSimpleLetterOrNumber = /^[A-ZÁÉÍÓÚÑ]$/i.test(rawLabel) || /^\d+$/.test(rawLabel)
+  const text = isSimpleLetterOrNumber ? rawLabel : getTraceLabel(target, language)
+  if (!text) return
+
+  window.speechSynthesis.cancel()
+  const utterance = new SpeechSynthesisUtterance(text)
+  utterance.lang = language === 'en' ? 'en-US' : 'es-NI'
+  utterance.rate = 0.72
+  utterance.pitch = 1.05
+  window.speechSynthesis.speak(utterance)
+}
+
 function TraceCanvas({ target, language, onEvaluated }) {
   const canvasRef = useRef(null)
   const guideRefs = useRef([])
@@ -305,6 +320,7 @@ function TraceCanvas({ target, language, onEvaluated }) {
 
     setEvaluation(nextEvaluation)
     onEvaluated?.(nextEvaluation)
+    if (nextEvaluation.accepted) speakTraceTarget(target, language)
   }
 
   const feedback = useMemo(() => {
