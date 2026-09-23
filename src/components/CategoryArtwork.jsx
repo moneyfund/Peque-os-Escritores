@@ -18,6 +18,24 @@ function VowelsArt() {
   </svg>
 }
 
+
+function AlphabetArt() {
+  return <svg viewBox="0 0 120 100" aria-hidden="true">
+    <defs>
+      <linearGradient id="aa1" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff475f"/><stop offset="1" stopColor="#ff7a35"/></linearGradient>
+      <linearGradient id="aa2" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#7b5cff"/><stop offset="1" stopColor="#3d7bff"/></linearGradient>
+      <filter id="aash"><feDropShadow dx="0" dy="5" stdDeviation="3" floodColor="#17345f" floodOpacity=".22"/></filter>
+    </defs>
+    <g filter="url(#aash)" fontFamily="Arial Rounded MT Bold, system-ui, sans-serif" fontWeight="900">
+      <rect x="8" y="13" width="104" height="74" rx="22" fill="url(#aa2)"/>
+      <text x="23" y="62" fontSize="42" fill="#fff">A</text>
+      <text x="53" y="62" fontSize="35" fill="#ffd85b">B</text>
+      <text x="80" y="62" fontSize="35" fill="#68e0a8">C</text>
+      <path d="M18 76h84" stroke="url(#aa1)" strokeWidth="6" strokeLinecap="round"/>
+    </g>
+  </svg>
+}
+
 function NumbersArt() {
   return <svg viewBox="0 0 120 100" aria-hidden="true">
     <defs>
@@ -91,6 +109,7 @@ function WordsArt() {
 
 const artMap = {
   vowels: VowelsArt,
+  alphabet: AlphabetArt,
   numbers: NumbersArt,
   colors: ColorsArt,
   shapes: ShapesArt,
