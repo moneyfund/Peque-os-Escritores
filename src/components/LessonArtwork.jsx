@@ -13,6 +13,12 @@ function ListenVowels() {
 function VowelPictures() {
   return <svg viewBox="0 0 120 100"><defs dangerouslySetInnerHTML={{__html:defs}}/><g filter="url(#laShadow)"><rect x="13" y="14" width="42" height="72" rx="15" fill="#5b9df7"/><text x="34" y="64" textAnchor="middle" fontSize="46" fontWeight="900" fill="#fff">A</text><path d="M76 35c18-8 31 5 27 22-4 17-24 29-33 8-7-17-1-27 6-30z" fill="#ff5f72"/><path d="M82 32c2-8 7-12 13-14" fill="none" stroke="#4da65d" strokeWidth="5" strokeLinecap="round"/><ellipse cx="96" cy="24" rx="8" ry="4" fill="#5bbf69" transform="rotate(-20 96 24)"/></g></svg>
 }
+function AlphabetBlocks() {
+  return <svg viewBox="0 0 120 100"><defs dangerouslySetInnerHTML={{__html:defs}}/><g filter="url(#laShadow)" fontFamily="system-ui" fontWeight="900"><rect x="10" y="17" width="31" height="66" rx="10" fill="#ff596f"/><rect x="44" y="9" width="31" height="74" rx="10" fill="#5b7cff"/><rect x="78" y="21" width="31" height="62" rx="10" fill="#58d49a"/><text x="25.5" y="62" textAnchor="middle" fontSize="28" fill="#fff">A</text><text x="59.5" y="58" textAnchor="middle" fontSize="28" fill="#fff">B</text><text x="93.5" y="62" textAnchor="middle" fontSize="28" fill="#fff">C</text></g></svg>
+}
+function AlphabetTrace() {
+  return <svg viewBox="0 0 120 100"><defs dangerouslySetInnerHTML={{__html:defs}}/><g filter="url(#laShadow)"><text x="14" y="79" fontSize="73" fontWeight="900" fill="#6d5ce6">A</text><g transform="translate(78 9) rotate(22)"><rect width="16" height="63" rx="7" fill="#ffd042"/><rect width="16" height="12" rx="6" fill="#ff6d87"/><path d="M0 63h16L8 79z" fill="#efc08b"/><path d="M5 73h6l-3 6z" fill="#17345f"/></g></g></svg>
+}
 function CountObjects() {
   return <svg viewBox="0 0 120 100"><defs dangerouslySetInnerHTML={{__html:defs}}/><g filter="url(#laShadow)"><circle cx="31" cy="34" r="14" fill="#ff7197"/><rect x="51" y="18" width="27" height="27" rx="8" fill="#ffd04d"/><path d="M98 48L82 20 66 48z" fill="#5f93f4"/><circle cx="35" cy="72" r="13" fill="#55d394"/><rect x="61" y="60" width="30" height="26" rx="8" fill="#b372ed"/></g><text x="99" y="82" textAnchor="middle" fontSize="26" fontWeight="900" fill="#17345f">?</text></svg>
 }
@@ -55,6 +61,11 @@ const artMap = {
   'vowel-pictures': VowelPictures,
   'vowel-hunt': VowelPictures,
   'vowel-master': ListenVowels,
+  'alphabet-listen': AlphabetBlocks,
+  'alphabet-recognize': AlphabetBlocks,
+  'alphabet-trace': AlphabetTrace,
+  'alphabet-order': AlphabetBlocks,
+  'alphabet-beginnings': AlphabetBlocks,
   'count-objects': CountObjects,
   'number-order': NumberOrder,
   'trace-numbers': TraceNumbers,
